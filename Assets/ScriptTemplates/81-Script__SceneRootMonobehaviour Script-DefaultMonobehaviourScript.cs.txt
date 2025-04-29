@@ -1,0 +1,24 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+internal sealed class #SCRIPTNAME# : MonoBehaviour, ISceneController {
+	
+    private const e_sceneIndex MYSELF = e_sceneIndex.;
+    private e_sceneIndex _nextScene = MYSELF;
+
+    public e_sceneIndex GetToken() {
+        return MYSELF;
+    }
+    public void OnSceneStart() {
+
+    }
+    public e_sceneIndex SceneUpdate() {
+        return MYSELF;
+    }
+    public void SceneFixedUpdate() {
+
+    }
+    public void OnSceneExit() {
+
+    }
+}
