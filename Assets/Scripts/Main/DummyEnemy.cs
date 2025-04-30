@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class DammyEnemy : MonoBehaviour, IEnemy{
+internal sealed class DummyEnemy : MonoBehaviour, IEnemy{
 
 	[SerializeField] private Animator _animator = default;
 	public void GetHit() {
