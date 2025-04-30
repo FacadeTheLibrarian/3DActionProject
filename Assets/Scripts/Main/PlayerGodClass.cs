@@ -82,7 +82,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     [SerializeField] private InputActionReference _normalAttackAction = default;
     [SerializeField] private InputActionReference _specialAttackAction = default;
 
-    [SerializeField] private OnAttack[] _attackState = default;
+    [SerializeField] private BaseOnAttackAction[] _attackState = default;
 
     [SerializeField] private bool _isOnAttack = false;
 
@@ -111,10 +111,11 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         _specialAttackAction.action.started += SpecialAttack;
         _specialAttackAction.action.Enable();
 
-        _attackState = _animator.GetBehaviours<OnAttack>();
-        foreach (OnAttack behaviour in _attackState) {
-            behaviour.OnStartAttack += AttackCast;
-            behaviour.OnEndAttack += EndAttack;
+        _attackState = _animator.GetBehaviours<BaseOnAttackAction>();
+        foreach (BaseOnAttackAction behaviour in _attackState) {
+            behaviour.Initialization(this);
+            behaviour.OnStartAttackPublisher += AttackCast;
+            behaviour.OnEndAttackPublisher += EndAttack;
         }
     }
 
@@ -133,9 +134,9 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         _specialAttackAction.action.started -= SpecialAttack;
         _specialAttackAction.action.Dispose();
 
-        foreach (OnAttack behaviour in _attackState) {
-            behaviour.OnStartAttack -= AttackCast;
-            behaviour.OnEndAttack -= EndAttack;
+        foreach (BaseOnAttackAction behaviour in _attackState) {
+            behaviour.OnStartAttackPublisher -= AttackCast;
+            behaviour.OnEndAttackPublisher -= EndAttack;
         }
     }
 
