@@ -218,6 +218,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
             return;
         }
         UpdateForward();
+        _controller.excludeLayers = _layerOnDodge;
         _dodgeForce = DODGE_INITIAL_FORCE;
         UseStamina(STAMINA_BASE_CONSUMPTION_ON_DODGE);
         _animator.Play("Dodge");
@@ -237,6 +238,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
 
         if (_dodgeForce <= 0.0f) {
             _animator.SetTrigger("EndDodge");
+            _controller.excludeLayers = 0;
             _currentHorizontalVelocity = _dodgeForce;
             _onDodge = false;
             _onStop = false;
