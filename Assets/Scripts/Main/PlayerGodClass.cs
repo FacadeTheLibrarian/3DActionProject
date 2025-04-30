@@ -54,6 +54,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     [SerializeField] private float _currentMoveSpeed = MOVE_SPEED;
     [SerializeField] private float _currentSprintSpeed = SPRINT_SPEED;
     [SerializeField] private LayerMask _layer = default;
+    [SerializeField] private LayerMask _layerOnDodge = default;
     [SerializeField] private bool _isOnGround = false;
 
     [SerializeField] private bool _hasMoveInput = false;
