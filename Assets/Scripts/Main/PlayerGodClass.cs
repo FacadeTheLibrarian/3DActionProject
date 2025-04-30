@@ -26,7 +26,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     //NOTE: スタミナ系定数
     private const float STAMINA_MAX = 100.0f;
     private const float STAMINA_BASE_RECOVERY_AMOUNT = 2.0f;
-    private const float STAMINA_BASE_CONSUMPTION_ON_SPLINT = 0.5f;
+    private const float STAMINA_BASE_CONSUMPTION_ON_SPRINT = 0.5f;
     private const float STAMINA_BASE_CONSUMPTION_ON_DODGE = 10.0f;
 
     //NOTE: キャスト時系定数
@@ -37,7 +37,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     [SerializeField] private Animator _animator = default;
 
     [SerializeField] private InputActionReference _moveAction = default;
-    [SerializeField] private InputActionReference _splintAction = default;
+    [SerializeField] private InputActionReference _sprintAction = default;
     [SerializeField] private InputActionReference _dodgeAction = default;
     [SerializeField] private CharacterController _controller = default;
 
@@ -54,7 +54,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     [SerializeField] private bool _isOnGround = false;
 
     [SerializeField] private bool _hasMoveInput = false;
-    [SerializeField] private bool _hasSplintInput = false;
+    [SerializeField] private bool _hasSprintInput = false;
 
     [SerializeField] private bool _onStop = true;
 
@@ -67,7 +67,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     [SerializeField] private bool _isRunOutOfStamina = false;
 
     //NOTE: ミュータブル化
-    [SerializeField] private float _staminaConsumptionOnSplint = STAMINA_BASE_CONSUMPTION_ON_SPLINT;
+    [SerializeField] private float _staminaConsumptionOnSprint = STAMINA_BASE_CONSUMPTION_ON_SPRINT;
     [SerializeField] private float _staminaConsumptionOnDodge = STAMINA_BASE_CONSUMPTION_ON_DODGE;
     [SerializeField] private float _staminaMax = STAMINA_MAX;
     [SerializeField] private float _staminaRecoveryAmount = STAMINA_BASE_RECOVERY_AMOUNT;
@@ -93,12 +93,12 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         _moveAction.action.started += StartMove;
         _moveAction.action.canceled += EndMove;
 
-        _splintAction.action.started += StartSplint;
-        _splintAction.action.canceled += EndSplint;
+        _sprintAction.action.started += StartSprint;
+        _sprintAction.action.canceled += EndSprint;
 
         _dodgeAction.action.started += StartDodge;
         _moveAction.action.Enable();
-        _splintAction.action.Enable();
+        _sprintAction.action.Enable();
         _dodgeAction.action.Enable();
 
         _normalAttackAction.action.started += NormalAttack;
@@ -119,9 +119,9 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         _moveAction.action.canceled -= EndMove;
         _moveAction.action.Dispose();
 
-        _splintAction.action.started -= StartSplint;
-        _splintAction.action.canceled -= EndSplint;
-        _splintAction.action.Dispose();
+        _sprintAction.action.started -= StartSprint;
+        _sprintAction.action.canceled -= EndSprint;
+        _sprintAction.action.Dispose();
 
         _normalAttackAction.action.started -= NormalAttack;
         _normalAttackAction.action.Dispose();
@@ -162,10 +162,10 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         //FIXME: なおして
         if (!_isOnAttack) {
             if (_hasMoveInput) {
-                if (_hasSplintInput) {
-                    UseStamina(STAMINA_BASE_CONSUMPTION_ON_SPLINT);
+                if (_hasSprintInput) {
+                    UseStamina(STAMINA_BASE_CONSUMPTION_ON_SPRINT);
                 }
-                targetSpeed = _hasSplintInput ? SPRINT_SPEED : MOVE_SPEED;
+                targetSpeed = _hasSprintInput ? SPRINT_SPEED : MOVE_SPEED;
                 UpdateForward();
             }
         }
@@ -245,7 +245,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         _stamina -= amount;
         if (_stamina <= 0.0f) {
             //NOTE: ここイベントでいいかも？
-            _hasSplintInput = false;
+            _hasSprintInput = false;
             _isRunOutOfStamina = true;
             _stamina = 0.0f;
         }
@@ -256,7 +256,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         if (_onDodge) {
             return;
         }
-        if (_hasSplintInput) {
+        if (_hasSprintInput) {
             return;
         }
         if (_stamina >= _staminaMax) {
@@ -315,14 +315,14 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     private void EndMove(InputAction.CallbackContext context) {
         _hasMoveInput = false;
     }
-    private void StartSplint(InputAction.CallbackContext context) {
+    private void StartSprint(InputAction.CallbackContext context) {
         if (_isRunOutOfStamina) {
             return;
         }
-        _hasSplintInput = true;
+        _hasSprintInput = true;
     }
-    private void EndSplint(InputAction.CallbackContext context) {
-        _hasSplintInput = false;
+    private void EndSprint(InputAction.CallbackContext context) {
+        _hasSprintInput = false;
     }
     private void EndAttack() {
         _isOnAttack = false;

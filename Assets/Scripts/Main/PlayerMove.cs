@@ -25,7 +25,7 @@ internal sealed class PlayerMove : IPlayerAction, IDisposable {
         BASE_MOVE_SPEED = variables.GetBaseMoveSpeed;
         BASE_SPRINT_SPEED = variables.GetBaseSprintSpeed;
         BASE_SPEED_CHANGE_RATE = variables.GetBaseSpeedChangeRate;
-        BASE_STAMINA_CONSUMPTION_ON_SPLINT = variables.GetBaseStaminaConsumptionOnSplint;
+        BASE_STAMINA_CONSUMPTION_ON_SPLINT = variables.GetBaseStaminaConsumptionOnSprint;
         STOP_THRESHOLD = variables.GetStopThreshold;
 
         _moveAction = moveAction;
