@@ -292,18 +292,33 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         if (numberOfCollider == 0) {
             return;
         }
+
         for (int i = 0; i < numberOfCollider; i++) {
             if (results[i].TryGetComponent<IEnemy>(out IEnemy possibleEnemy)) {
-                possibleEnemy.GetHit();
+                possibleEnemy.GetHit(10, _forward);
             }
         }
     }
 
-    //private void OnDrawGizmos() {
-    //    Gizmos.DrawSphere(this.transform.position + Vector3.up * this.transform.localScale.y / 2.0f + (_forward * 3.0f), 2.0f);
-    //}
-
     //NOTE: Input Systemイベント用
+    private void NormalAttack(InputAction.CallbackContext context) {
+        if (_isRunOutOfStamina) {
+            return;
+        }
+        _isOnAttack = true;
+        _animator.SetTrigger("Attack");
+        _animator.SetInteger("AttackType", 0);
+    }
+
+    private void SpecialAttack(InputAction.CallbackContext context) {
+        if (_isRunOutOfStamina) {
+            return;
+        }
+        _isOnAttack = true;
+        _animator.SetTrigger("Attack");
+        _animator.SetInteger("AttackType", 1);
+    }
+
     private void StartMove(InputAction.CallbackContext context) {
         _onStop = false;
         _hasMoveInput = true;
