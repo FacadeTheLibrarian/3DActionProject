@@ -215,12 +215,11 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         if (_onDodge) {
             return;
         }
-        if (_isOnAttack) {
-            return;
-        }
+        UpdateForward();
         _dodgeForce = DODGE_INITIAL_FORCE;
         UseStamina(STAMINA_BASE_CONSUMPTION_ON_DODGE);
-        _animator.SetTrigger("Dodge");
+        _animator.Play("Dodge");
+        _isOnAttack = false;
         _onDodge = true;
         _onStop = true;
     }
