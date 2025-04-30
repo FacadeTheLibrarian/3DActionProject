@@ -50,6 +50,8 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     //NOTE: 移動関連
     [SerializeField] private float _currentHorizontalVelocity = 0.0f;
     [SerializeField] private float _verticalVelocity = 0.0f;
+    [SerializeField] private float _currentMoveSpeed = MOVE_SPEED;
+    [SerializeField] private float _currentSprintSpeed = SPRINT_SPEED;
     [SerializeField] private LayerMask _layer = default;
     [SerializeField] private bool _isOnGround = false;
 
@@ -165,14 +167,14 @@ internal sealed class PlayerGodClass : MonoBehaviour {
                 if (_hasSprintInput) {
                     UseStamina(STAMINA_BASE_CONSUMPTION_ON_SPRINT);
                 }
-                targetSpeed = _hasSprintInput ? SPRINT_SPEED : MOVE_SPEED;
+                targetSpeed = _hasSprintInput ? _currentSprintSpeed : _currentMoveSpeed;
                 UpdateForward();
             }
         }
 
         _currentHorizontalVelocity = Mathf.Lerp(_currentHorizontalVelocity, targetSpeed, SPEED_CHANGE_RATE);
         Vector3 force = new Vector3(_forward.x * _currentHorizontalVelocity, -_verticalVelocity, _forward.z * _currentHorizontalVelocity);
-        _animator.SetFloat("Speed", _currentHorizontalVelocity);
+        _animator.SetFloat("Speed", _currentHorizontalVelocity / _currentSprintSpeed);
         _controller.Move(force * Time.deltaTime);
 
         if (_hasMoveInput) {
