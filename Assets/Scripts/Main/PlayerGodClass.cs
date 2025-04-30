@@ -265,7 +265,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         if (_stamina >= _staminaMax) {
             return;
         }
-        _stamina += _staminaRecoveryAmount;
+        _stamina += _staminaRecoveryAmount * Time.deltaTime;
         if (_stamina >= _staminaMax) {
             _isRunOutOfStamina = false;
             _stamina = _staminaMax;
