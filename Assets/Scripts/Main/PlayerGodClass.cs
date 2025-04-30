@@ -298,7 +298,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         }
 
         for (int i = 0; i < numberOfCollider; i++) {
-            if (results[i].TryGetComponent<IEnemy>(out IEnemy possibleEnemy)) {
+            if (results[i].TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
                 possibleEnemy.GetHit(10, _forward);
             }
         }
