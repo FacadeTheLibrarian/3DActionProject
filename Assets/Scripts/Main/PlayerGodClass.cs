@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 //TODO: ステートパターンが適していると思うので、それに沿って変更
-internal sealed class PlayerGodClass : MonoBehaviour {
+internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     //NOTE: 接地判定定数
     private const float GROUND_OFFSET = -0.5f;
     private const float GROUNDED_RADIUS = 0.5f;
@@ -140,6 +140,21 @@ internal sealed class PlayerGodClass : MonoBehaviour {
             behaviour.OnEndAttackPublisher -= EndAttack;
         }
     }
+    //インターフェース実装
+    public Vector3 GetPosition() {
+        return this.transform.position;
+    }
+    public Vector3 GetForward() {
+        return _forward;
+    }
+    public Quaternion GetRotation() {
+        return this.transform.rotation;
+    }
+
+    public float GetHalfScaleY() {
+        return this.transform.localScale.y / 2.0f;
+    }
+
 
     //共通
     private void UpdateForward() {
