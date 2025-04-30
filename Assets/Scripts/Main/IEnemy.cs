@@ -2,5 +2,6 @@
 using UnityEngine;
 
 public interface IEnemy {
-	public void GetHit();
+	public void GetHit(int damageAmount, in Vector3 playerForward);
+	public Vector3 GetPosition();
 }
