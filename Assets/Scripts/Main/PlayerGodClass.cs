@@ -25,9 +25,10 @@ internal sealed class PlayerGodClass : MonoBehaviour {
 
     //NOTE: スタミナ系定数
     private const float STAMINA_MAX = 100.0f;
-    private const float STAMINA_BASE_RECOVERY_AMOUNT = 2.0f;
+    private const float STAMINA_BASE_RECOVERY_AMOUNT = 20.0f;
     private const float STAMINA_BASE_CONSUMPTION_ON_SPRINT = 0.5f;
-    private const float STAMINA_BASE_CONSUMPTION_ON_DODGE = 10.0f;
+    private const float STAMINA_BASE_CONSUMPTION_ON_DODGE = 40.0f;
+    private const float STAMINA_BASE_CONSUMPTION_ON_ATTACK = 30.0f;
 
     //NOTE: キャスト時系定数
     private const int CAST_BUFFER_SIZE = 16;
@@ -71,6 +72,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     //NOTE: ミュータブル化
     [SerializeField] private float _staminaConsumptionOnSprint = STAMINA_BASE_CONSUMPTION_ON_SPRINT;
     [SerializeField] private float _staminaConsumptionOnDodge = STAMINA_BASE_CONSUMPTION_ON_DODGE;
+    [SerializeField] private float _staminaConsumptionOnAttack = STAMINA_BASE_CONSUMPTION_ON_ATTACK;
     [SerializeField] private float _staminaMax = STAMINA_MAX;
     [SerializeField] private float _staminaRecoveryAmount = STAMINA_BASE_RECOVERY_AMOUNT;
 
@@ -275,21 +277,14 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     }
 
     //NOTE: 攻撃関連
-    private void NormalAttack(InputAction.CallbackContext context) {
-        _isOnAttack = true;
-        _animator.SetTrigger("Attack");
-        _animator.SetInteger("AttackType", 0);
-    }
-
-    private void SpecialAttack(InputAction.CallbackContext context) {
-        _isOnAttack = true;
-        _animator.SetTrigger("Attack");
-        _animator.SetInteger("AttackType", 1);
-    }
 
     //FIXME: Attackの種類のストラテジとキーを持ったディクショナリを作成する
+    //UPDATE: 攻撃をStateMachineBehaviourに持たせる
     private void AttackCast() {
-        Vector3 castPosition = this.transform.position + Vector3.up * this.transform.localScale.y / 2.0f + (_forward * 3.0f);
+        UseStamina(_staminaConsumptionOnAttack);
+        Vector3 forwardedPosition = (_forward * 3.0f);
+        Vector3 height = new Vector3(0.0f, this.transform.localScale.y / 2.0f, 0.0f);
+        Vector3 castPosition = this.transform.position + height + forwardedPosition;
         Collider[] results = new Collider[CAST_BUFFER_SIZE];
         int numberOfCollider = Physics.OverlapSphereNonAlloc(castPosition, 2.0f, results, _layer);
         //Physics.SphereCastNonAlloc(this.transform.position, 2.0f, _forward, results, 10.0f, _layer);
