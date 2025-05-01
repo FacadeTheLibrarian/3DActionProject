@@ -112,6 +112,10 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _specialAttackAction.action.started += SpecialAttack;
         _specialAttackAction.action.Enable();
 
+        //NOTE: 後方互換性のためにfalseになっているため、trueにするべきとのこと
+        //      SEE -> https://www.youtube.com/watch?v=oF-nby5JBSw&t=251s ;
+        _animator.keepAnimatorStateOnDisable = true;
+
         _attackState = _animator.GetBehaviours<BaseOnAttackAction>();
         foreach (BaseOnAttackAction behaviour in _attackState) {
             behaviour.Initialization(this);
