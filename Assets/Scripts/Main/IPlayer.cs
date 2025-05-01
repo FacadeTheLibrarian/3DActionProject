@@ -2,8 +2,7 @@
 using UnityEngine;
 
 internal interface IPlayer {
-	public Vector3 GetPosition();
-	public Quaternion GetRotation();
+	public Transform GetTransform();
 	public float GetHalfScaleY();
 	public Vector3 GetForward();
 }
