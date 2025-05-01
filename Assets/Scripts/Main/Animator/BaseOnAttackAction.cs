@@ -15,21 +15,21 @@ internal class BaseOnAttackAction : StateMachineBehaviour {
 
     protected Vector3 GetCastPosition() {
         Vector3 twoDimentionalCastPosition = _player.GetForward() * _attackCastVariables.GetDistanceFactor;
-        Vector3 castPosition = _player.GetPosition() + new Vector3(twoDimentionalCastPosition.x, _player.GetHalfScaleY(), twoDimentionalCastPosition.z);
+        Vector3 castPosition = _player.GetTransform().position + new Vector3(twoDimentionalCastPosition.x, _player.GetHalfScaleY(), twoDimentionalCastPosition.z);
         return castPosition;
     }
     protected Vector3 GetCastPosition(float factor) {
         Vector3 twoDimentionalCastPosition = _player.GetForward() * factor;
-        Vector3 castPosition = _player.GetPosition() + new Vector3(twoDimentionalCastPosition.x, _player.GetHalfScaleY(), twoDimentionalCastPosition.z);
+        Vector3 castPosition = _player.GetTransform().position + new Vector3(twoDimentionalCastPosition.x, _player.GetHalfScaleY(), twoDimentionalCastPosition.z);
         return castPosition;
     }
 
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         OnStartAttackPublisher?.Invoke();
-        OnEnterAttack();
+        OnEnterAttack(stateInfo.length);
     }
 
-    protected virtual void OnEnterAttack() {
+    protected virtual void OnEnterAttack(float clipLength) {
         //nop
     }
 
