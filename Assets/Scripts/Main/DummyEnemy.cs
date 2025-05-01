@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class DummyEnemy : MonoBehaviour, IEnemy{
+internal sealed class DummyEnemy : MonoBehaviour, IDamagableObjects{
 
 	[SerializeField] private int _hp = 20;
 	[SerializeField] private Animator _animator = default;
