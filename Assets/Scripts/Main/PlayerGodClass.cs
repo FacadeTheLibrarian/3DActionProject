@@ -145,14 +145,11 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         }
     }
     //インターフェース実装
-    public Vector3 GetPosition() {
-        return this.transform.position;
+    public Transform GetTransform() {
+        return this.transform;
     }
     public Vector3 GetForward() {
         return _forward;
-    }
-    public Quaternion GetRotation() {
-        return this.transform.rotation;
     }
 
     public float GetHalfScaleY() {
