@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 //TODO: ステートパターンが適していると思うので、それに沿って変更
-internal sealed class PlayerGodClass : MonoBehaviour {
+internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     //NOTE: 接地判定定数
     private const float GROUND_OFFSET = -0.5f;
     private const float GROUNDED_RADIUS = 0.5f;
@@ -25,9 +25,10 @@ internal sealed class PlayerGodClass : MonoBehaviour {
 
     //NOTE: スタミナ系定数
     private const float STAMINA_MAX = 100.0f;
-    private const float STAMINA_BASE_RECOVERY_AMOUNT = 2.0f;
-    private const float STAMINA_BASE_CONSUMPTION_ON_SPLINT = 0.5f;
-    private const float STAMINA_BASE_CONSUMPTION_ON_DODGE = 10.0f;
+    private const float STAMINA_BASE_RECOVERY_AMOUNT = 20.0f;
+    private const float STAMINA_BASE_CONSUMPTION_ON_SPRINT = 0.5f;
+    private const float STAMINA_BASE_CONSUMPTION_ON_DODGE = 40.0f;
+    private const float STAMINA_BASE_CONSUMPTION_ON_ATTACK = 30.0f;
 
     //NOTE: キャスト時系定数
     private const int CAST_BUFFER_SIZE = 16;
@@ -37,7 +38,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     [SerializeField] private Animator _animator = default;
 
     [SerializeField] private InputActionReference _moveAction = default;
-    [SerializeField] private InputActionReference _splintAction = default;
+    [SerializeField] private InputActionReference _sprintAction = default;
     [SerializeField] private InputActionReference _dodgeAction = default;
     [SerializeField] private CharacterController _controller = default;
 
@@ -50,11 +51,14 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     //NOTE: 移動関連
     [SerializeField] private float _currentHorizontalVelocity = 0.0f;
     [SerializeField] private float _verticalVelocity = 0.0f;
+    [SerializeField] private float _currentMoveSpeed = MOVE_SPEED;
+    [SerializeField] private float _currentSprintSpeed = SPRINT_SPEED;
     [SerializeField] private LayerMask _layer = default;
+    [SerializeField] private LayerMask _layerOnDodge = default;
     [SerializeField] private bool _isOnGround = false;
 
     [SerializeField] private bool _hasMoveInput = false;
-    [SerializeField] private bool _hasSplintInput = false;
+    [SerializeField] private bool _hasSprintInput = false;
 
     [SerializeField] private bool _onStop = true;
 
@@ -67,8 +71,9 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     [SerializeField] private bool _isRunOutOfStamina = false;
 
     //NOTE: ミュータブル化
-    [SerializeField] private float _staminaConsumptionOnSplint = STAMINA_BASE_CONSUMPTION_ON_SPLINT;
+    [SerializeField] private float _staminaConsumptionOnSprint = STAMINA_BASE_CONSUMPTION_ON_SPRINT;
     [SerializeField] private float _staminaConsumptionOnDodge = STAMINA_BASE_CONSUMPTION_ON_DODGE;
+    [SerializeField] private float _staminaConsumptionOnAttack = STAMINA_BASE_CONSUMPTION_ON_ATTACK;
     [SerializeField] private float _staminaMax = STAMINA_MAX;
     [SerializeField] private float _staminaRecoveryAmount = STAMINA_BASE_RECOVERY_AMOUNT;
 
@@ -78,7 +83,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     [SerializeField] private InputActionReference _normalAttackAction = default;
     [SerializeField] private InputActionReference _specialAttackAction = default;
 
-    [SerializeField] private OnAttack[] _attackState = default;
+    [SerializeField] private BaseOnAttackAction[] _attackState = default;
 
     [SerializeField] private bool _isOnAttack = false;
 
@@ -93,12 +98,12 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         _moveAction.action.started += StartMove;
         _moveAction.action.canceled += EndMove;
 
-        _splintAction.action.started += StartSplint;
-        _splintAction.action.canceled += EndSplint;
+        _sprintAction.action.started += StartSprint;
+        _sprintAction.action.canceled += EndSprint;
 
         _dodgeAction.action.started += StartDodge;
         _moveAction.action.Enable();
-        _splintAction.action.Enable();
+        _sprintAction.action.Enable();
         _dodgeAction.action.Enable();
 
         _normalAttackAction.action.started += NormalAttack;
@@ -107,10 +112,15 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         _specialAttackAction.action.started += SpecialAttack;
         _specialAttackAction.action.Enable();
 
-        _attackState = _animator.GetBehaviours<OnAttack>();
-        foreach (OnAttack behaviour in _attackState) {
-            behaviour.OnStartAttack += AttackCast;
-            behaviour.OnEndAttack += EndAttack;
+        //NOTE: 後方互換性のためにfalseになっているため、trueにするべきとのこと
+        //      SEE -> https://www.youtube.com/watch?v=oF-nby5JBSw&t=251s ;
+        _animator.keepAnimatorStateOnDisable = true;
+
+        _attackState = _animator.GetBehaviours<BaseOnAttackAction>();
+        foreach (BaseOnAttackAction behaviour in _attackState) {
+            behaviour.Initialization(this);
+            behaviour.OnStartAttackPublisher += AttackCast;
+            behaviour.OnEndAttackPublisher += EndAttack;
         }
     }
 
@@ -119,9 +129,9 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         _moveAction.action.canceled -= EndMove;
         _moveAction.action.Dispose();
 
-        _splintAction.action.started -= StartSplint;
-        _splintAction.action.canceled -= EndSplint;
-        _splintAction.action.Dispose();
+        _sprintAction.action.started -= StartSprint;
+        _sprintAction.action.canceled -= EndSprint;
+        _sprintAction.action.Dispose();
 
         _normalAttackAction.action.started -= NormalAttack;
         _normalAttackAction.action.Dispose();
@@ -129,11 +139,23 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         _specialAttackAction.action.started -= SpecialAttack;
         _specialAttackAction.action.Dispose();
 
-        foreach (OnAttack behaviour in _attackState) {
-            behaviour.OnStartAttack -= AttackCast;
-            behaviour.OnEndAttack -= EndAttack;
+        foreach (BaseOnAttackAction behaviour in _attackState) {
+            behaviour.OnStartAttackPublisher -= AttackCast;
+            behaviour.OnEndAttackPublisher -= EndAttack;
         }
     }
+    //インターフェース実装
+    public Transform GetTransform() {
+        return this.transform;
+    }
+    public Vector3 GetForward() {
+        return _forward;
+    }
+
+    public float GetHalfScaleY() {
+        return this.transform.localScale.y / 2.0f;
+    }
+
 
     //共通
     private void UpdateForward() {
@@ -162,17 +184,17 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         //FIXME: なおして
         if (!_isOnAttack) {
             if (_hasMoveInput) {
-                if (_hasSplintInput) {
-                    UseStamina(STAMINA_BASE_CONSUMPTION_ON_SPLINT);
+                if (_hasSprintInput) {
+                    UseStamina(STAMINA_BASE_CONSUMPTION_ON_SPRINT);
                 }
-                targetSpeed = _hasSplintInput ? SPRINT_SPEED : MOVE_SPEED;
+                targetSpeed = _hasSprintInput ? _currentSprintSpeed : _currentMoveSpeed;
                 UpdateForward();
             }
         }
 
         _currentHorizontalVelocity = Mathf.Lerp(_currentHorizontalVelocity, targetSpeed, SPEED_CHANGE_RATE);
         Vector3 force = new Vector3(_forward.x * _currentHorizontalVelocity, -_verticalVelocity, _forward.z * _currentHorizontalVelocity);
-        _animator.SetFloat("Speed", _currentHorizontalVelocity);
+        _animator.SetFloat("Speed", _currentHorizontalVelocity / _currentSprintSpeed);
         _controller.Move(force * Time.deltaTime);
 
         if (_hasMoveInput) {
@@ -213,12 +235,12 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         if (_onDodge) {
             return;
         }
-        if (_isOnAttack) {
-            return;
-        }
+        UpdateForward();
+        _controller.excludeLayers = _layerOnDodge;
         _dodgeForce = DODGE_INITIAL_FORCE;
         UseStamina(STAMINA_BASE_CONSUMPTION_ON_DODGE);
-        _animator.SetTrigger("Dodge");
+        _animator.Play("Dodge");
+        _isOnAttack = false;
         _onDodge = true;
         _onStop = true;
     }
@@ -234,6 +256,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
 
         if (_dodgeForce <= 0.0f) {
             _animator.SetTrigger("EndDodge");
+            _controller.excludeLayers = 0;
             _currentHorizontalVelocity = _dodgeForce;
             _onDodge = false;
             _onStop = false;
@@ -245,7 +268,7 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         _stamina -= amount;
         if (_stamina <= 0.0f) {
             //NOTE: ここイベントでいいかも？
-            _hasSplintInput = false;
+            _hasSprintInput = false;
             _isRunOutOfStamina = true;
             _stamina = 0.0f;
         }
@@ -256,13 +279,13 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         if (_onDodge) {
             return;
         }
-        if (_hasSplintInput) {
+        if (_hasSprintInput) {
             return;
         }
         if (_stamina >= _staminaMax) {
             return;
         }
-        _stamina += _staminaRecoveryAmount;
+        _stamina += _staminaRecoveryAmount * Time.deltaTime;
         if (_stamina >= _staminaMax) {
             _isRunOutOfStamina = false;
             _stamina = _staminaMax;
@@ -274,21 +297,14 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     }
 
     //NOTE: 攻撃関連
-    private void NormalAttack(InputAction.CallbackContext context) {
-        _isOnAttack = true;
-        _animator.SetTrigger("Attack");
-        _animator.SetInteger("AttackType", 0);
-    }
-
-    private void SpecialAttack(InputAction.CallbackContext context) {
-        _isOnAttack = true;
-        _animator.SetTrigger("Attack");
-        _animator.SetInteger("AttackType", 1);
-    }
 
     //FIXME: Attackの種類のストラテジとキーを持ったディクショナリを作成する
+    //UPDATE: 攻撃をStateMachineBehaviourに持たせる
     private void AttackCast() {
-        Vector3 castPosition = this.transform.position + Vector3.up * this.transform.localScale.y / 2.0f + (_forward * 3.0f);
+        UseStamina(_staminaConsumptionOnAttack);
+        Vector3 forwardedPosition = (_forward * 3.0f);
+        Vector3 height = new Vector3(0.0f, this.transform.localScale.y / 2.0f, 0.0f);
+        Vector3 castPosition = this.transform.position + height + forwardedPosition;
         Collider[] results = new Collider[CAST_BUFFER_SIZE];
         int numberOfCollider = Physics.OverlapSphereNonAlloc(castPosition, 2.0f, results, _layer);
         //Physics.SphereCastNonAlloc(this.transform.position, 2.0f, _forward, results, 10.0f, _layer);
@@ -296,18 +312,33 @@ internal sealed class PlayerGodClass : MonoBehaviour {
         if (numberOfCollider == 0) {
             return;
         }
+
         for (int i = 0; i < numberOfCollider; i++) {
-            if (results[i].TryGetComponent<IEnemy>(out IEnemy possibleEnemy)) {
-                possibleEnemy.GetHit();
+            if (results[i].TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
+                possibleEnemy.GetHit(10, _forward);
             }
         }
     }
 
-    //private void OnDrawGizmos() {
-    //    Gizmos.DrawSphere(this.transform.position + Vector3.up * this.transform.localScale.y / 2.0f + (_forward * 3.0f), 2.0f);
-    //}
-
     //NOTE: Input Systemイベント用
+    private void NormalAttack(InputAction.CallbackContext context) {
+        if (_isRunOutOfStamina) {
+            return;
+        }
+        _isOnAttack = true;
+        _animator.SetTrigger("Attack");
+        _animator.SetInteger("AttackType", 0);
+    }
+
+    private void SpecialAttack(InputAction.CallbackContext context) {
+        if (_isRunOutOfStamina) {
+            return;
+        }
+        _isOnAttack = true;
+        _animator.SetTrigger("Attack");
+        _animator.SetInteger("AttackType", 1);
+    }
+
     private void StartMove(InputAction.CallbackContext context) {
         _onStop = false;
         _hasMoveInput = true;
@@ -315,14 +346,14 @@ internal sealed class PlayerGodClass : MonoBehaviour {
     private void EndMove(InputAction.CallbackContext context) {
         _hasMoveInput = false;
     }
-    private void StartSplint(InputAction.CallbackContext context) {
+    private void StartSprint(InputAction.CallbackContext context) {
         if (_isRunOutOfStamina) {
             return;
         }
-        _hasSplintInput = true;
+        _hasSprintInput = true;
     }
-    private void EndSplint(InputAction.CallbackContext context) {
-        _hasSplintInput = false;
+    private void EndSprint(InputAction.CallbackContext context) {
+        _hasSprintInput = false;
     }
     private void EndAttack() {
         _isOnAttack = false;
