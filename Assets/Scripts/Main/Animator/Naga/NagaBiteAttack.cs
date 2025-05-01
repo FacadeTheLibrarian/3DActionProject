@@ -1,18 +1,31 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using SimpleMan.VisualRaycast;
 
 internal sealed class NagaBiteAttack : BaseOnAttackAction {
 
-    protected override void OnEnterAttack() {
+    protected override void OnEnterAttack(float clipLength) {
         Vector3 castPosition = GetCastPosition(3.0f);
-        Collider[] results = new Collider[_attackCastVariables.GetBufferSizeMax];
-        int numberOfCollider = Physics.OverlapBoxNonAlloc(castPosition, new Vector3(2.0f, 0.5f, 0.5f), results, _player.GetRotation(), _attackCastVariables.GetLayerMask);
-        if (numberOfCollider == 0) {
-            return;
-        }
 
-        for (int i = 0; i < numberOfCollider; i++) {
-            if (results[i].TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
+
+        Transform playerTransform = _player.GetTransform();
+        Collider[] results = ComponentExtension.BoxOverlap(playerTransform, castPosition, new Vector3(5.0f, 1.0f, 3.0f), playerTransform.rotation, _attackCastVariables.GetLayerMask, true);
+
+        //CastResult result = ComponentExtension.Boxcast(playerTransform, true, playerTransform.position, _player.GetForward(), new Vector3(5.0f, 1.0f, 3.0f), 5.0f, _attackCastVariables.GetLayerMask, true);
+
+        //if (!result) {
+        //    Debug.Log("BoxCastヒットなし");
+        //    return;
+        //}
+
+        //foreach (RaycastHit hit in result.Hits) {
+        //    if (hit.collider.TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
+        //        possibleEnemy.GetHit(10, _player.GetForward());
+        //    }
+        //}
+
+        foreach (Collider collider in results) {
+            if (collider.TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
                 possibleEnemy.GetHit(10, _player.GetForward());
             }
         }

@@ -1,17 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using SimpleMan.VisualRaycast;
+using System.Collections.Generic;
 using UnityEngine;
 
 internal sealed class NagaRightSlashAttack : BaseOnAttackAction {
-	    protected override void OnEnterAttack() {
-        Vector3 castPosition = GetCastPosition() + _attackCastVariables.GetRightAdjustment;
-        Collider[] results = new Collider[_attackCastVariables.GetBufferSizeMax];
-        int numberOfCollider = Physics.OverlapBoxNonAlloc(castPosition, new Vector3(0.25f, 0.25f, 0.25f), results, _player.GetRotation(), _attackCastVariables.GetLayerMask);
-        if (numberOfCollider == 0) {
-            return;
-        }
+    protected override void OnEnterAttack(float clipLength) {
+        Vector3 forward = _player.GetForward();
+        Vector3 right = new Vector3(forward.z, 0.0f, -forward.x);
+        Vector3 castPosition = GetCastPosition() + right * _attackCastVariables.GetRightAdjustment;
+        Transform playerTransform = _player.GetTransform();
+        Collider[] results = ComponentExtension.BoxOverlap(playerTransform, castPosition, new Vector3(3.0f, 1.0f, 3.0f), playerTransform.rotation, _attackCastVariables.GetLayerMask, true);
 
-        for (int i = 0; i < numberOfCollider; i++) {
-            if (results[i].TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
+        foreach (Collider collider in results) {
+            if (collider.TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
                 possibleEnemy.GetHit(5, _player.GetForward());
             }
         }
