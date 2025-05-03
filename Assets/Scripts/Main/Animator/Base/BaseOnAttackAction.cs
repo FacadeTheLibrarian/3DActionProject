@@ -11,6 +11,11 @@ internal class BaseOnAttackAction : StateMachineBehaviour {
 
     public void Initialization(in IPlayer player) {
         _player = player;
+        InnerInitialization();
+    }
+
+    protected virtual void InnerInitialization() {
+        //nop
     }
 
     protected Vector3 GetCastPosition() {
@@ -24,7 +29,7 @@ internal class BaseOnAttackAction : StateMachineBehaviour {
         return castPosition;
     }
 
-    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+    public sealed override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         OnStartAttackPublisher?.Invoke();
         OnEnterAttack(stateInfo.length);
     }
@@ -33,7 +38,7 @@ internal class BaseOnAttackAction : StateMachineBehaviour {
         //nop
     }
 
-    public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+    public sealed override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         OnAttackUpdate();
     }
 
@@ -41,7 +46,7 @@ internal class BaseOnAttackAction : StateMachineBehaviour {
         //nop
     }
 
-    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+    public sealed override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
         OnEndAttackPublisher?.Invoke();
         OnEndAttack();
     }
