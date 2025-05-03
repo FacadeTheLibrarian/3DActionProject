@@ -4,6 +4,14 @@ using UnityEngine.UI;
 
 //TODO: ステートパターンが適していると思うので、それに沿って変更
 internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
+    //NOTE: enum定数
+    public enum e_generation {
+        first = 0,
+        second = 1,
+        third = 2,
+        max,
+    }
+
     //NOTE: 接地判定定数
     private const float GROUND_OFFSET = -0.5f;
     private const float GROUNDED_RADIUS = 0.5f;
@@ -30,12 +38,9 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     private const float STAMINA_BASE_CONSUMPTION_ON_DODGE = 40.0f;
     private const float STAMINA_BASE_CONSUMPTION_ON_ATTACK = 30.0f;
 
-    //NOTE: キャスト時系定数
-    private const int CAST_BUFFER_SIZE = 16;
-
     //NOTE: 依存コンポーネント
     [SerializeField] private Camera _mainCamera = default;
-    [SerializeField] private Animator _animator = default;
+    [SerializeField] private Animator[] _animator = new Animator[(int)e_generation.max];
 
     [SerializeField] private InputActionReference _moveAction = default;
     [SerializeField] private InputActionReference _sprintAction = default;
@@ -46,6 +51,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     [SerializeField] private Vector3 _forward = default;
 
     //NOTE: 成長システム関連
+    [SerializeField] private e_generation _currentGeneration = e_generation.first;
     [SerializeField] private int _currentExp = 0;
 
     //NOTE: 移動関連
@@ -83,7 +89,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     [SerializeField] private InputActionReference _normalAttackAction = default;
     [SerializeField] private InputActionReference _specialAttackAction = default;
 
-    [SerializeField] private BaseOnAttackAction[] _attackState = default;
+    //[SerializeField] private BaseOnAttackAction[] _attackState = default;
 
     [SerializeField] private bool _isOnAttack = false;
 
@@ -112,16 +118,19 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _specialAttackAction.action.started += SpecialAttack;
         _specialAttackAction.action.Enable();
 
-        //NOTE: 後方互換性のためにfalseになっているため、trueにするべきとのこと
-        //      SEE -> https://www.youtube.com/watch?v=oF-nby5JBSw&t=251s ;
-        _animator.keepAnimatorStateOnDisable = true;
+        for (int i = 0; i < (int)e_generation.max; i++) {
+            //NOTE: 後方互換性のためにfalseになっているため、trueにするべきとのこと
+            //      SEE -> https://www.youtube.com/watch?v=oF-nby5JBSw&t=251s ;
+            _animator[i].keepAnimatorStateOnDisable = true;
 
-        _attackState = _animator.GetBehaviours<BaseOnAttackAction>();
-        foreach (BaseOnAttackAction behaviour in _attackState) {
-            behaviour.Initialization(this);
-            behaviour.OnStartAttackPublisher += AttackCast;
-            behaviour.OnEndAttackPublisher += EndAttack;
+            BaseOnAttackAction[] attackState = _animator[i].GetBehaviours<BaseOnAttackAction>();
+            foreach (BaseOnAttackAction behaviour in attackState) {
+                behaviour.Initialization(this);
+                behaviour.OnStartAttackPublisher += AttackCast;
+                behaviour.OnEndAttackPublisher += EndAttack;
+            }
         }
+
     }
 
     private void OnDestroy() {
@@ -139,9 +148,12 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _specialAttackAction.action.started -= SpecialAttack;
         _specialAttackAction.action.Dispose();
 
-        foreach (BaseOnAttackAction behaviour in _attackState) {
-            behaviour.OnStartAttackPublisher -= AttackCast;
-            behaviour.OnEndAttackPublisher -= EndAttack;
+        for (int i = 0; i < (int)e_generation.max; i++) {
+            BaseOnAttackAction[] attackState = _animator[i].GetBehaviours<BaseOnAttackAction>();
+            foreach (BaseOnAttackAction behaviour in attackState) {
+                behaviour.OnStartAttackPublisher -= AttackCast;
+                behaviour.OnEndAttackPublisher -= EndAttack;
+            }
         }
     }
     //インターフェース実装
@@ -194,14 +206,14 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
 
         _currentHorizontalVelocity = Mathf.Lerp(_currentHorizontalVelocity, targetSpeed, SPEED_CHANGE_RATE);
         Vector3 force = new Vector3(_forward.x * _currentHorizontalVelocity, -_verticalVelocity, _forward.z * _currentHorizontalVelocity);
-        _animator.SetFloat("Speed", _currentHorizontalVelocity / _currentSprintSpeed);
+        _animator[(int)_currentGeneration].SetFloat("Speed", _currentHorizontalVelocity / _currentSprintSpeed);
         _controller.Move(force * Time.deltaTime);
 
         if (_hasMoveInput) {
             return;
         }
         if (MathUtility.IsInsideExclusive(_currentHorizontalVelocity, -STOP_THRESHOLD, STOP_THRESHOLD)) {
-            _animator.SetFloat("Speed", 0.0f);
+            _animator[(int)_currentGeneration].SetFloat("Speed", 0.0f);
             _currentHorizontalVelocity = 0.0f;
             _onStop = true;
         }
@@ -239,7 +251,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _controller.excludeLayers = _layerOnDodge;
         _dodgeForce = DODGE_INITIAL_FORCE;
         UseStamina(STAMINA_BASE_CONSUMPTION_ON_DODGE);
-        _animator.Play("Dodge");
+        _animator[(int)_currentGeneration].Play("Dodge");
         _isOnAttack = false;
         _onDodge = true;
         _onStop = true;
@@ -255,7 +267,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _dodgeForce -= DODGE_INITIAL_FORCE * DODGE_TIME * Time.deltaTime;
 
         if (_dodgeForce <= 0.0f) {
-            _animator.SetTrigger("EndDodge");
+            _animator[(int)_currentGeneration].SetTrigger("EndDodge");
             _controller.excludeLayers = 0;
             _currentHorizontalVelocity = _dodgeForce;
             _onDodge = false;
@@ -302,22 +314,6 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     //UPDATE: 攻撃をStateMachineBehaviourに持たせる
     private void AttackCast() {
         UseStamina(_staminaConsumptionOnAttack);
-        Vector3 forwardedPosition = (_forward * 3.0f);
-        Vector3 height = new Vector3(0.0f, this.transform.localScale.y / 2.0f, 0.0f);
-        Vector3 castPosition = this.transform.position + height + forwardedPosition;
-        Collider[] results = new Collider[CAST_BUFFER_SIZE];
-        int numberOfCollider = Physics.OverlapSphereNonAlloc(castPosition, 2.0f, results, _layer);
-        //Physics.SphereCastNonAlloc(this.transform.position, 2.0f, _forward, results, 10.0f, _layer);
-
-        if (numberOfCollider == 0) {
-            return;
-        }
-
-        for (int i = 0; i < numberOfCollider; i++) {
-            if (results[i].TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
-                possibleEnemy.GetHit(10, _forward);
-            }
-        }
     }
 
     //NOTE: Input Systemイベント用
@@ -326,8 +322,8 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
             return;
         }
         _isOnAttack = true;
-        _animator.SetTrigger("Attack");
-        _animator.SetInteger("AttackType", 0);
+        _animator[(int)_currentGeneration].SetTrigger("Attack");
+        _animator[(int)_currentGeneration].SetInteger("AttackType", 0);
     }
 
     private void SpecialAttack(InputAction.CallbackContext context) {
@@ -335,8 +331,8 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
             return;
         }
         _isOnAttack = true;
-        _animator.SetTrigger("Attack");
-        _animator.SetInteger("AttackType", 1);
+        _animator[(int)_currentGeneration].SetTrigger("Attack");
+        _animator[(int)_currentGeneration].SetInteger("AttackType", 1);
     }
 
     private void StartMove(InputAction.CallbackContext context) {
