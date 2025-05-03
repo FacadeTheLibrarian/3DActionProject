@@ -9,4 +9,13 @@ public class AnimationParticleSelecter : ScriptableObject {
         leftSlash = 2,
         rightSlash = 3,
     }
+    public enum e_snakeParticles {
+        bite = 0,
+        tailAttack = 1,
+        fireBall = 2,
+    }
+    public enum e_snakeletParticles {
+        bite = 0,
+        tailAttack = 1,
+    }
 }
