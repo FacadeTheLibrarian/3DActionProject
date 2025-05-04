@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89ccc4d4cbc89f34cb64b8ff081fddb3, type: 3}
+  m_Name: AttackCastVariables
+  m_EditorClassIdentifier: 
+  _layerToCheck:
+    serializedVersion: 2
+    m_Bits: 128
+  _bufferSizeMax: 16
+  _distanceFactor: 2
+  _leftAdjustment: 2
+  _rightAdjustment: 2

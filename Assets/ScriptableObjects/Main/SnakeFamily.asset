@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a4878b84acce0248afa76564f247e1a, type: 3}
+  m_Name: SnakeFamily
+  m_EditorClassIdentifier: 
+  _firstGenerationMonster: {fileID: 2041900889474212061, guid: 277c70672ef6b984ebc2347ddf89a4d3, type: 3}
+  _secondGenerationMonster: {fileID: 848049054415357177, guid: 70d4343005b5cc944b16a4cd992920ce, type: 3}
+  _thirdGenerationMonster: {fileID: 2538105262323491673, guid: 77236604515a04f4d95a83d34f716abe, type: 3}
+  _moveVariables: {fileID: 0}
+  _staminaVariables: {fileID: 0}
+  _attackVariables: {fileID: 0}
+  _requiredExpToSecond: 100
+  _requiredExpToThird: 1000
