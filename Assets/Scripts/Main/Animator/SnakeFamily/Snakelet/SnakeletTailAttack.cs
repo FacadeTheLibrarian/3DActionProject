@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class SnakeletTailAttack : BaseOnAttackAction {
-    protected override void OnEnterAttack(float clipLength) {
-        Vector3 castPosition = GetCastPosition(_forwardOffset);
+internal sealed class SnakeletTailAttack : BaseAttack {
+    public void TailAttack() {
+        Vector3 castPosition = GetCastPosition();
 
         Transform playerTransform = _player.GetTransform();
-        Collider[] results = ComponentExtension.BoxOverlap(playerTransform, castPosition, _boxSize, playerTransform.rotation, _attackCastVariables.GetLayerMask, true);
+        Collider[] results = ComponentExtension.BoxOverlap(playerTransform, castPosition, _boxSize, playerTransform.rotation, _layer, true);
 
         foreach (Collider collider in results) {
             if (collider.TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 [CreateAssetMenu(fileName = "AttackCast", menuName = "ScriptableObjects/AttackCast")]
 public class AttackCastVariables : ScriptableObject {
@@ -16,5 +15,5 @@ public class AttackCastVariables : ScriptableObject {
     public float GetDistanceFactor => _distanceFactor;
     public float GetLeftAdjustment => _leftAdjustment;
     public float
-        GetRightAdjustment => _rightAdjustment;
+    GetRightAdjustment => _rightAdjustment;
 }
