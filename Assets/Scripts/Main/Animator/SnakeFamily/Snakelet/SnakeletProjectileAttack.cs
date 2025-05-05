@@ -2,47 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class SnakeletProjectileAttack : MonoBehaviour {
+internal sealed class SnakeletProjectileAttack : BaseAttack {
     private const int QUEUE_MAX = 4;
 
-    [SerializeField] private Queue<BasePlayerCruisingProjectile> _pool = default;
-    [SerializeField] private BasePlayerCruisingProjectile _prefab = default;
+    private Pool<PlayerCruisingProjectile> _pool = default;
+    [SerializeField] private PlayerCruisingProjectile _prefab = default;
 
-    [SerializeField] private PlayerGodClass _player;
-
-    [SerializeField, Range(0, 100)] private int _baseDamage = 2;
     [SerializeField, Range(0, 100)] private int _explosiveDamage = 5;
     [SerializeField] private float _initialVelocity = 30.0f;
-    [SerializeField] private float _forwardOffset = 2.0f;
 
-    [SerializeField] private LayerMask _layer = default;
-
-    public void Awake() {
-        _pool = new Queue<BasePlayerCruisingProjectile>(QUEUE_MAX);
-        for (int i = 0; i < QUEUE_MAX; i++) {
-            BasePlayerCruisingProjectile instance = Instantiate(_prefab);
-            _pool.Enqueue(instance);
-        }
+    public void Start() {
+        _pool = new Pool<PlayerCruisingProjectile>();
+        _pool.MakePool(_prefab, QUEUE_MAX);
     }
     public void Fire() {
         Transform playerPosition = _player.GetTransform();
         Vector3 forward = _player.GetForward();
-        PullTrigger(playerPosition.position + forward * _forwardOffset + Vector3.up, forward, _initialVelocity, (int)(_baseDamage * _player.GetAttackFactor()), (int)(_explosiveDamage * _player.GetAttackFactor()));
+        PullTrigger(GetCastPosition(), forward, _initialVelocity, (int)(_baseDamage * _player.GetAttackFactor()), (int)(_explosiveDamage * _player.GetAttackFactor()));
     }
 
     private void PullTrigger(in Vector3 currentPosition, in Vector3 forward, in float initialVelocity, int mainDamage, int subDamage) {
-        BasePlayerCruisingProjectile instance = GetPooledObject();
+        PlayerCruisingProjectile instance = _pool.GetPooledObject();
         instance.Fire(currentPosition, forward, initialVelocity, mainDamage, subDamage, _layer);
-    }
-
-    private BasePlayerCruisingProjectile GetPooledObject() {
-        if (_pool.Peek().GetIsOccupied()) {
-            BasePlayerCruisingProjectile generatedInstance = Instantiate(_prefab);
-            _pool.Enqueue(generatedInstance);
-            return generatedInstance;
-        }
-        BasePlayerCruisingProjectile instance = _pool.Dequeue();
-        _pool.Enqueue(instance);
-        return instance;
     }
 }

@@ -14,7 +14,7 @@ internal class BaseAttack : MonoBehaviour {
     [SerializeField] protected Vector3 _boxSize = default;
 
     protected IPlayer _player;
-    [SerializeField] private PlayerGodClass _playerDebug;
+    [SerializeField] protected PlayerGodClass _playerDebug;
     private void Awake() {
         _player = _playerDebug;
     }

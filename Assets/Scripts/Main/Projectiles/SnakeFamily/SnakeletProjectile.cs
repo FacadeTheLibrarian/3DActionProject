@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class SnakeletProjectile : BasePlayerCruisingProjectile {
+internal sealed class SnakeletProjectile : PlayerCruisingProjectile {
     [SerializeField] private ParticleSystem _explosion = default;
     [SerializeField] private float _explosionRadius = 1.5f;
 
