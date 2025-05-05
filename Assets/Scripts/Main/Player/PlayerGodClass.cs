@@ -92,6 +92,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     //[SerializeField] private BaseOnAttackAction[] _attackState = default;
 
     [SerializeField] private bool _isOnAttack = false;
+    [SerializeField] private float _attackPowerFactor = 1.0f;
 
 #if UNITY_EDITOR
     private void Reset() {
@@ -101,6 +102,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
 #endif
 
     public void PlayerStart() {
+        BaseEnemy.OnDefeated += GainExperience;
         _moveAction.action.started += StartMove;
         _moveAction.action.canceled += EndMove;
 
@@ -164,10 +166,12 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         return _forward;
     }
 
-    public float GetHalfScaleY() {
-        return this.transform.localScale.y / 2.0f;
+    public float GetScaleY() {
+        return this.transform.localScale.y;
     }
-
+    public float GetAttackFactor() {
+        return _attackPowerFactor;
+    }
 
     //共通
     private void UpdateForward() {
@@ -185,6 +189,12 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
 
         _forward.Set(-x, 0.0f, y);
     }
+
+    //経験値デリゲート
+    public void GainExperience(int amount) {
+        _currentExp += amount;
+    }
+
 
     //移動関連
     public void HorizontalMove() {
