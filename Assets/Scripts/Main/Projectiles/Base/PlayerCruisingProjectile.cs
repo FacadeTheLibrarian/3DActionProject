@@ -3,10 +3,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-internal class BasePlayerCruisingProjectile : MonoBehaviour, IPoolableObjects {
-
-    private bool _isOccupied = false;
-    public bool GetIsOccupied() => _isOccupied;
+internal class PlayerCruisingProjectile : BaseProjectile {
 
     [SerializeField] private ParticleSystem _baseProjectileParticleHandler = default;
 

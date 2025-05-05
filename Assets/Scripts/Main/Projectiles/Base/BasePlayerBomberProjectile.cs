@@ -1,11 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
-internal class BasePlayerBomberProjectile : MonoBehaviour, IPoolableObjects {
-    private bool _isOccupied = false;
-    public bool GetIsOccupied() => _isOccupied;
+internal class BasePlayerBomberProjectile : BaseProjectile {
 
     [SerializeField] private ParticleSystem _baseProjectileParticleHandler = default;
 

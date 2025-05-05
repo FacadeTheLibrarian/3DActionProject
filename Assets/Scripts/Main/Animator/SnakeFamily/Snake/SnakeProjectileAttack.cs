@@ -5,8 +5,8 @@ using UnityEngine;
 internal sealed class SnakeProjectileAttack : MonoBehaviour {
     private const int QUEUE_MAX = 4;
 
-    [SerializeField] private Queue<BasePlayerCruisingProjectile> _pool = default;
-    [SerializeField] private BasePlayerCruisingProjectile _prefab = default;
+    [SerializeField] private Queue<PlayerCruisingProjectile> _pool = default;
+    [SerializeField] private PlayerCruisingProjectile _prefab = default;
 
     [SerializeField] private PlayerGodClass _player;
 
@@ -18,9 +18,9 @@ internal sealed class SnakeProjectileAttack : MonoBehaviour {
     [SerializeField] private LayerMask _layer = default;
 
     public void Awake() {
-        _pool = new Queue<BasePlayerCruisingProjectile>(QUEUE_MAX);
+        _pool = new Queue<PlayerCruisingProjectile>(QUEUE_MAX);
         for (int i = 0; i < QUEUE_MAX; i++) {
-            BasePlayerCruisingProjectile instance = Instantiate(_prefab);
+            PlayerCruisingProjectile instance = Instantiate(_prefab);
             _pool.Enqueue(instance);
         }
     }
@@ -31,17 +31,17 @@ internal sealed class SnakeProjectileAttack : MonoBehaviour {
     }
 
     private void PullTrigger(in Vector3 currentPosition, in Vector3 forward, in float initialVelocity, int mainDamage, int subDamage) {
-        BasePlayerCruisingProjectile instance = GetPooledObject();
+        PlayerCruisingProjectile instance = GetPooledObject();
         instance.Fire(currentPosition, forward, initialVelocity, mainDamage, subDamage, _layer);
     }
 
-    private BasePlayerCruisingProjectile GetPooledObject() {
+    private PlayerCruisingProjectile GetPooledObject() {
         if (_pool.Peek().GetIsOccupied()) {
-            BasePlayerCruisingProjectile generatedInstance = Instantiate(_prefab);
+            PlayerCruisingProjectile generatedInstance = Instantiate(_prefab);
             _pool.Enqueue(generatedInstance);
             return generatedInstance;
         }
-        BasePlayerCruisingProjectile instance = _pool.Dequeue();
+        PlayerCruisingProjectile instance = _pool.Dequeue();
         _pool.Enqueue(instance);
         return instance;
     }
