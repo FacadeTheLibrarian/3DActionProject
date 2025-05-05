@@ -1,13 +1,10 @@
 ﻿using SimpleMan.VisualRaycast;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class NagaLeftSlashAttack : BaseOnAttackAction {
+internal sealed class SnakeHeadbattAttack : BaseOnAttackAction {
     protected override void OnEnterAttack(float clipLength) {
-        Vector3 forward = _player.GetForward();
-        Vector3 left = new Vector3(-forward.z, 0.0f, forward.x);
-        Vector3 castPosition = GetCastPosition(_forwardOffset) + left * _attackCastVariables.GetRightAdjustment;
+        Vector3 castPosition = GetCastPosition(_forwardOffset);
 
         Transform playerTransform = _player.GetTransform();
         Collider[] results = ComponentExtension.BoxOverlap(playerTransform, castPosition, _boxSize, playerTransform.rotation, _attackCastVariables.GetLayerMask, true);

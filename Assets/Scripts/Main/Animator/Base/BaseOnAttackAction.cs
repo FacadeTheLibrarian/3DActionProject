@@ -6,7 +6,10 @@ internal class BaseOnAttackAction : StateMachineBehaviour {
     public event Action OnStartAttackPublisher;
     public event Action OnEndAttackPublisher;
 
-    [SerializeField] protected AttackCastVariables _attackCastVariables;
+    [SerializeField] protected Vector3 _boxSize = default;
+    [SerializeField, Range(1.0f, 5.0f)] protected float _forwardOffset = default;
+    [SerializeField] protected AttackCastVariables _attackCastVariables = default;
+    [SerializeField, Range(0, 100)] protected int _baseDamage = default;
     protected IPlayer _player = default;
 
     public void Initialization(in IPlayer player) {
@@ -17,15 +20,9 @@ internal class BaseOnAttackAction : StateMachineBehaviour {
     protected virtual void InnerInitialization() {
         //nop
     }
-
-    protected Vector3 GetCastPosition() {
-        Vector3 twoDimentionalCastPosition = _player.GetForward() * _attackCastVariables.GetDistanceFactor;
-        Vector3 castPosition = _player.GetTransform().position + new Vector3(twoDimentionalCastPosition.x, _player.GetHalfScaleY(), twoDimentionalCastPosition.z);
-        return castPosition;
-    }
-    protected Vector3 GetCastPosition(float factor) {
-        Vector3 twoDimentionalCastPosition = _player.GetForward() * factor;
-        Vector3 castPosition = _player.GetTransform().position + new Vector3(twoDimentionalCastPosition.x, _player.GetHalfScaleY(), twoDimentionalCastPosition.z);
+    protected Vector3 GetCastPosition(float offsetFactor) {
+        Vector3 twoDimentionalCastPosition = _player.GetForward() * offsetFactor;
+        Vector3 castPosition = _player.GetTransform().position + new Vector3(twoDimentionalCastPosition.x, _player.GetScaleY(), twoDimentionalCastPosition.z);
         return castPosition;
     }
 

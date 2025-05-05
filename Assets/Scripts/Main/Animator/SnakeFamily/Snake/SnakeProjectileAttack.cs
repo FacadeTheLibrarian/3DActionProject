@@ -10,6 +10,11 @@ internal sealed class SnakeProjectileAttack : MonoBehaviour {
 
     [SerializeField] private PlayerGodClass _player;
 
+    [SerializeField, Range(0, 100)] private int _baseDamage = 5;
+    [SerializeField, Range(0, 100)] private int _explosiveDamage = 10;
+    [SerializeField] private float _initialVelocity = 30.0f;
+    [SerializeField] private float _forwardOffset = 2.0f;
+
     [SerializeField] private LayerMask _layer = default;
 
     public void Awake() {
@@ -22,7 +27,7 @@ internal sealed class SnakeProjectileAttack : MonoBehaviour {
     public void Fire() {
         Transform playerPosition = _player.GetTransform();
         Vector3 forward = _player.GetForward();
-        PullTrigger(playerPosition.position + forward * 2.0f + Vector3.up, forward, 30.0f, 10, 10);
+        PullTrigger(playerPosition.position + forward * _forwardOffset + Vector3.up, forward, _initialVelocity, (int)(_baseDamage * _player.GetAttackFactor()), (int)(_explosiveDamage * _player.GetAttackFactor()));
     }
 
     private void PullTrigger(in Vector3 currentPosition, in Vector3 forward, in float initialVelocity, int mainDamage, int subDamage) {

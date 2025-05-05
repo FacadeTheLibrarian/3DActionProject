@@ -5,14 +5,14 @@ using SimpleMan.VisualRaycast;
 internal sealed class NagaBiteAttack : BaseOnAttackAction {
 
     protected override void OnEnterAttack(float clipLength) {
-        Vector3 castPosition = GetCastPosition(3.0f);
+        Vector3 castPosition = GetCastPosition(_forwardOffset);
 
         Transform playerTransform = _player.GetTransform();
-        Collider[] results = ComponentExtension.BoxOverlap(playerTransform, castPosition, new Vector3(5.0f, 1.0f, 3.0f), playerTransform.rotation, _attackCastVariables.GetLayerMask, true);
+        Collider[] results = ComponentExtension.BoxOverlap(playerTransform, castPosition, _boxSize, playerTransform.rotation, _attackCastVariables.GetLayerMask, true);
 
         foreach (Collider collider in results) {
             if (collider.TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
-                possibleEnemy.GetHit(10, _player.GetForward());
+                possibleEnemy.GetHit((int)(_baseDamage * _player.GetAttackFactor()), _player.GetForward());
             }
         }
     }
