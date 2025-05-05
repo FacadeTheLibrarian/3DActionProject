@@ -215,7 +215,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b038466cdb6a5cf489a150e809e0d43b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _boxSize: {x: 5, y: 2, z: 2}
+  _forwardOffset: 3
   _attackCastVariables: {fileID: 11400000, guid: 9c77fc1e41b3f644c8f7f9d017080c71, type: 2}
+  _baseDamage: 5
 --- !u!1101 &-3112992055668942013
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -858,7 +861,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e336afc6bcb7b0f45a889a91a38d28ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _boxSize: {x: 3, y: 2, z: 2}
+  _forwardOffset: 3
   _attackCastVariables: {fileID: 11400000, guid: 9c77fc1e41b3f644c8f7f9d017080c71, type: 2}
+  _baseDamage: 2
 --- !u!114 &6558369885044298718
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -871,7 +877,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31fd2a7819498334db9ec09de9f810f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _boxSize: {x: 0, y: 0, z: 0}
+  _forwardOffset: 1
   _attackCastVariables: {fileID: 11400000, guid: 9c77fc1e41b3f644c8f7f9d017080c71, type: 2}
+  _baseDamage: 0
 --- !u!1102 &7294459730187997855
 AnimatorState:
   serializedVersion: 6
