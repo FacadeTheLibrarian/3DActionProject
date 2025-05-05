@@ -10,8 +10,8 @@ internal class BaseAttack : MonoBehaviour {
 
     [SerializeField] protected LayerMask _layer = default;
     [SerializeField, Range(0, 100)] protected int _baseDamage = default;
-    [SerializeField] protected Vector3 _castOffset = default;
-    [SerializeField] protected Vector3 _boxSize = default;
+    [SerializeField] protected Vector3 _castOffset = Vector3.zero;
+    [SerializeField] protected Vector3 _boxSize = Vector3.one;
 
     protected IPlayer _player;
     [SerializeField] protected PlayerGodClass _playerDebug;
