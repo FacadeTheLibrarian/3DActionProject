@@ -4,7 +4,7 @@ using UnityEngine;
 
 internal sealed class SnakeletBite : BaseAttack {
     public void Bite() {
-        Vector3 castPosition = GetCastPosition();
+        Vector3 castPosition = GetInitialCastPosition();
 
         Transform playerTransform = _player.GetTransform();
         Collider[] results = ComponentExtension.BoxOverlap(playerTransform, castPosition, _boxSize, playerTransform.rotation, _layer, true);

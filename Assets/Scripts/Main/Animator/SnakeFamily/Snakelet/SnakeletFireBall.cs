@@ -18,7 +18,7 @@ internal sealed class SnakeletFireBall : BaseAttack {
     public void Fire() {
         Transform playerPosition = _player.GetTransform();
         Vector3 forward = _player.GetForward();
-        PullTrigger(GetCastPosition(), forward, _initialVelocity, (int)(_baseDamage * _player.GetAttackFactor()), (int)(_explosiveDamage * _player.GetAttackFactor()));
+        PullTrigger(GetInitialCastPosition(), forward, _initialVelocity, (int)(_baseDamage * _player.GetAttackFactor()), (int)(_explosiveDamage * _player.GetAttackFactor()));
     }
 
     private void PullTrigger(in Vector3 currentPosition, in Vector3 forward, in float initialVelocity, int mainDamage, int subDamage) {
