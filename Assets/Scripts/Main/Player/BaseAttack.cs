@@ -10,7 +10,7 @@ internal class BaseAttack : MonoBehaviour {
 
     [SerializeField] protected LayerMask _layer = default;
     [SerializeField, Range(0, 100)] protected int _baseDamage = default;
-    [SerializeField] protected Vector3 _castOffset = Vector3.zero;
+    [SerializeField] protected Vector3 _initialCastOffset = Vector3.zero;
     [SerializeField] protected Vector3 _boxSize = Vector3.one;
 
     protected IPlayer _player;
@@ -23,9 +23,9 @@ internal class BaseAttack : MonoBehaviour {
         _player = playerHandler;
     }
 
-    protected Vector3 GetCastPosition() {
+    protected Vector3 GetInitialCastPosition() {
         Quaternion rotation = Quaternion.LookRotation(_player.GetForward(), Vector3.up);
-        Vector3 offset = rotation * _castOffset;
+        Vector3 offset = rotation * _initialCastOffset;
         return this.transform.position + offset;
     }
 }
