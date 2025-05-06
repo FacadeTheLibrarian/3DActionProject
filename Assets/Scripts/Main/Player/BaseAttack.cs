@@ -14,13 +14,13 @@ internal class BaseAttack : MonoBehaviour {
     [SerializeField] protected Vector3 _boxSize = Vector3.one;
 
     protected IPlayer _player;
-    public void Initialization(in IPlayer playerHandler) {
-        _player = playerHandler;
-        InnerInitializatiton();
+    [SerializeField] protected PlayerGodClass _playerDebug;
+    private void Awake() {
+        _player = _playerDebug;
     }
 
-    protected virtual void InnerInitializatiton() {
-        //nop
+    public void SetUp(in IPlayer playerHandler) {
+        _player = playerHandler;
     }
 
     protected Vector3 GetInitialCastPosition() {
