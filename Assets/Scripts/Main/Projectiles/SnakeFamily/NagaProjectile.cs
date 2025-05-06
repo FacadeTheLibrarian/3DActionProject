@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal sealed class NagaProjectile : BasePlayerBomberProjectile {
+internal sealed class NagaProjectile : PlayerTimeBombProjectile {
     [SerializeField] private ParticleSystem _explosion = default;
     [SerializeField] private float _explosionRadius = 4.0f;
 
