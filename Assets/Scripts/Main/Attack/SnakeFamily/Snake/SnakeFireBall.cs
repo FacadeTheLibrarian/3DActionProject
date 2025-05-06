@@ -8,21 +8,19 @@ internal sealed class SnakeFireBall : BaseAttack {
     private Pool<PlayerCruisingProjectile> _pool = default;
     [SerializeField] private PlayerCruisingProjectile _prefab = default;
 
-    [SerializeField, Range(0, 100)] private int _explosiveDamage = 5;
+    [SerializeField, Range(0, 100)] private int _explosionDamage = 5;
     [SerializeField] private float _initialVelocity = 30.0f;
 
-    public void Start() {
+    protected override void InnerInitializatiton() {
         _pool = new Pool<PlayerCruisingProjectile>();
         _pool.MakePool(_prefab, QUEUE_MAX);
     }
     public void Fire() {
         Transform playerPosition = _player.GetTransform();
         Vector3 forward = _player.GetForward();
-        PullTrigger(GetInitialCastPosition(), forward, _initialVelocity, (int)(_baseDamage * _player.GetAttackFactor()), (int)(_explosiveDamage * _player.GetAttackFactor()));
-    }
-
-    private void PullTrigger(in Vector3 currentPosition, in Vector3 forward, in float initialVelocity, int mainDamage, int subDamage) {
+        int modifiedBaseDamage = (int)(_baseDamage * _player.GetAttackFactor());
+        int modifiedExplosionDamage = (int)(_explosionDamage * _player.GetAttackFactor());
         PlayerCruisingProjectile instance = _pool.GetPooledObject();
-        instance.Fire(currentPosition, forward, initialVelocity, mainDamage, subDamage, _layer);
+        instance.Fire(GetInitialCastPosition(), forward, _initialVelocity, modifiedBaseDamage, modifiedExplosionDamage, _layer);
     }
 }

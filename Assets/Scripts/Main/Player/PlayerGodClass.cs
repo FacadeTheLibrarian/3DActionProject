@@ -2,15 +2,8 @@
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-//TODO: ステートパターンが適していると思うので、それに沿って変更
 internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
-    //NOTE: enum定数
-    public enum e_generation {
-        first = 0,
-        second = 1,
-        third = 2,
-        max,
-    }
+
 
     //NOTE: 接地判定定数
     private const float GROUND_OFFSET = -0.5f;
@@ -39,8 +32,11 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     private const float STAMINA_BASE_CONSUMPTION_ON_ATTACK = 30.0f;
 
     //NOTE: 依存コンポーネント
+    [SerializeField] private MonsterSetData _monsterPrefab = default;
     [SerializeField] private Camera _mainCamera = default;
-    [SerializeField] private Animator[] _animator = new Animator[(int)e_generation.max];
+
+    [SerializeField] private BasePlayableMonster[] _monsterLead = new BasePlayableMonster[(int)BasePlayableMonster.e_generation.max];
+    [SerializeField] private Animator[] _animator = new Animator[(int)BasePlayableMonster.e_generation.max];
 
     [SerializeField] private InputActionReference _moveAction = default;
     [SerializeField] private InputActionReference _sprintAction = default;
@@ -51,8 +47,26 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     [SerializeField] private Vector3 _forward = default;
 
     //NOTE: 成長システム関連
-    [SerializeField] private e_generation _currentGeneration = e_generation.first;
+    [SerializeField] private InputActionReference _growthAction = default;
+    [SerializeField] private BasePlayableMonster.e_generation _currentGeneration = BasePlayableMonster.e_generation.first;
+    [SerializeField] private bool _isGrowthReady = false;
+
+    [SerializeField] private int _expNeedToGrow = 0;
+
     [SerializeField] private int _currentExp = 0;
+    public int CurrentExp {
+        get {
+            return _currentExp;
+        }
+        private set {
+            int addResult = _currentExp + value;
+            if (addResult > _expNeedToGrow) {
+                _isGrowthReady = true;
+                OnGrowthReady();
+            }
+            _currentExp = addResult;
+        }
+    }
 
     //NOTE: 移動関連
     [SerializeField] private float _currentHorizontalVelocity = 0.0f;
@@ -89,8 +103,6 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     [SerializeField] private InputActionReference _normalAttackAction = default;
     [SerializeField] private InputActionReference _specialAttackAction = default;
 
-    //[SerializeField] private BaseOnAttackAction[] _attackState = default;
-
     [SerializeField] private bool _isOnAttack = false;
     [SerializeField] private float _attackPowerFactor = 1.0f;
 
@@ -114,25 +126,36 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _sprintAction.action.Enable();
         _dodgeAction.action.Enable();
 
+        _growthAction.action.started += OnGrowth;
+        _growthAction.action.Enable();
+
+
         _normalAttackAction.action.started += NormalAttack;
         _normalAttackAction.action.Enable();
 
         _specialAttackAction.action.started += SpecialAttack;
         _specialAttackAction.action.Enable();
 
-        for (int i = 0; i < (int)e_generation.max; i++) {
+        for (int i = 0; i < (int)BasePlayableMonster.e_generation.max; i++) {
+            _monsterLead[i] = Instantiate(_monsterPrefab[i], this.transform);
+            _monsterLead[i].Initialization(this);
+            _animator[i] = _monsterLead[i].GetAnimator;
+
             //NOTE: 後方互換性のためにfalseになっているため、trueにするべきとのこと
             //      SEE -> https://www.youtube.com/watch?v=oF-nby5JBSw&t=251s ;
             _animator[i].keepAnimatorStateOnDisable = true;
 
-            BaseOnAttackAction[] attackState = _animator[i].GetBehaviours<BaseOnAttackAction>();
-            foreach (BaseOnAttackAction behaviour in attackState) {
+            OnAttackBehaviour[] attackState = _animator[i].GetBehaviours<OnAttackBehaviour>();
+            foreach (OnAttackBehaviour behaviour in attackState) {
                 behaviour.Initialization(this);
                 behaviour.OnStartAttackPublisher += AttackCast;
                 behaviour.OnEndAttackPublisher += EndAttack;
             }
-        }
 
+            if (i >= 1) {
+                _monsterLead[i].gameObject.SetActive(false);
+            }
+        }
     }
 
     private void OnDestroy() {
@@ -144,15 +167,18 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _sprintAction.action.canceled -= EndSprint;
         _sprintAction.action.Dispose();
 
+        _growthAction.action.started -= OnGrowth;
+        _growthAction.action.Dispose();
+
         _normalAttackAction.action.started -= NormalAttack;
         _normalAttackAction.action.Dispose();
 
         _specialAttackAction.action.started -= SpecialAttack;
         _specialAttackAction.action.Dispose();
 
-        for (int i = 0; i < (int)e_generation.max; i++) {
-            BaseOnAttackAction[] attackState = _animator[i].GetBehaviours<BaseOnAttackAction>();
-            foreach (BaseOnAttackAction behaviour in attackState) {
+        for (int i = 0; i < (int)BasePlayableMonster.e_generation.max; i++) {
+            OnAttackBehaviour[] attackState = _animator[i].GetBehaviours<OnAttackBehaviour>();
+            foreach (OnAttackBehaviour behaviour in attackState) {
                 behaviour.OnStartAttackPublisher -= AttackCast;
                 behaviour.OnEndAttackPublisher -= EndAttack;
             }
@@ -192,7 +218,20 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
 
     //経験値デリゲート
     public void GainExperience(int amount) {
-        _currentExp += amount;
+        CurrentExp += amount;
+    }
+
+    private void OnGrowthReady() {
+
+    }
+
+    private void OnGrowth(InputAction.CallbackContext context) {
+        if (!_isGrowthReady) {
+            return;
+        }
+        _monsterLead[(int)_currentGeneration].gameObject.SetActive(false);
+        _currentGeneration++;
+        _monsterLead[(int)_currentGeneration].gameObject.SetActive(true);
     }
 
 
@@ -364,4 +403,24 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     private void EndAttack() {
         _isOnAttack = false;
     }
+
+#if UNITY_EDITOR
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.Alpha1)) {
+            _monsterLead[(int)_currentGeneration].gameObject.SetActive(false);
+            _currentGeneration = BasePlayableMonster.e_generation.first;
+            _monsterLead[(int)_currentGeneration].gameObject.SetActive(true);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha2)) {
+            _monsterLead[(int)_currentGeneration].gameObject.SetActive(false);
+            _currentGeneration = BasePlayableMonster.e_generation.second;
+            _monsterLead[(int)_currentGeneration].gameObject.SetActive(true);
+        }
+        if (Input.GetKeyDown(KeyCode.Alpha3)) {
+            _monsterLead[(int)_currentGeneration].gameObject.SetActive(false);
+            _currentGeneration = BasePlayableMonster.e_generation.third;
+            _monsterLead[(int)_currentGeneration].gameObject.SetActive(true);
+        }
+    }
+#endif
 }
