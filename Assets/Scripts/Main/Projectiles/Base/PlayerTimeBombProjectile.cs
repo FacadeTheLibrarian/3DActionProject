@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal class BasePlayerBomberProjectile : BaseProjectile {
+internal class PlayerTimeBombProjectile : BaseProjectile {
 
     [SerializeField] private ParticleSystem _baseProjectileParticleHandler = default;
 
@@ -15,13 +15,13 @@ internal class BasePlayerBomberProjectile : BaseProjectile {
     [SerializeField] protected int _subProjectileDamageAmount = 0;
 
     [SerializeField] private float _maximumVelocity = 50.0f;
-    [SerializeField] private float _lifetime = 0.0f;
+    [SerializeField] private float _timer = 0.0f;
     [SerializeField] private float _timeLeftToHit = 0.0f;
     [SerializeField] private bool _isLifeTimeOver = false;
 
     [SerializeField] protected LayerMask _layer = default;
 
-    public void Fire(in Vector3 currentPosition, in Vector3 forward, in Vector3 staticTargetPosition, in Vector3 initialVelocity, int mainDamage, int subDamage, in LayerMask layer) {
+    public void Fire(in Vector3 currentPosition, in Vector3 forward, in Vector3 staticTargetPosition, in Vector3 initialVelocity, int mainDamage, int subDamage, in LayerMask layer, float timer) {
         _isLifeTimeOver = false;
         this.transform.position = currentPosition;
 
@@ -32,28 +32,8 @@ internal class BasePlayerBomberProjectile : BaseProjectile {
         _baseProjectileDamageAmount = mainDamage;
         _subProjectileDamageAmount = subDamage;
 
-        _lifetime = _baseProjectileParticleHandler.main.duration;
-        _timeLeftToHit = _lifetime;
-
-        _layer = layer;
-
-        _isOccupied = true;
-        _baseProjectileParticleHandler.Play();
-        StartCoroutine(OnShot());
-    }
-    public void Fire(in Vector3 currentPosition, in Vector3 forward, in Vector3 staticTargetPosition, in Vector3 initialVelocity, int mainDamage, int subDamage, in LayerMask layer, float lifeTime) {
-        _isLifeTimeOver = false;
-        this.transform.position = currentPosition;
-
-        _forward = forward;
-        _targetPosition = staticTargetPosition;
-        _velocity = initialVelocity;
-
-        _baseProjectileDamageAmount = mainDamage;
-        _subProjectileDamageAmount = subDamage;
-
-        _lifetime = lifeTime;
-        _timeLeftToHit = _lifetime;
+        _timer = timer;
+        _timeLeftToHit = _timer;
 
         _layer = layer;
 
@@ -75,7 +55,7 @@ internal class BasePlayerBomberProjectile : BaseProjectile {
         acceleration += (difference - _velocity * _timeLeftToHit) * 2.0f / (_timeLeftToHit * _timeLeftToHit);
 
         _timeLeftToHit -= Time.deltaTime; 
-        if (_lifetime - _timeLeftToHit >= _lifetime) {
+        if (_timer - _timeLeftToHit >= _timer) {
             End();
             return;
         }
