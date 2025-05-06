@@ -13,11 +13,11 @@ internal class PlayerCruisingProjectile : BaseProjectile {
     [SerializeField] private int _baseProjectileDamageAmount = 0;
     [SerializeField] protected int _subProjectileDamageAmount = 0;
 
+    [SerializeField] private int _seekInterval = 3;
     [SerializeField] private int _seekCounter = 0;
     [SerializeField] private float _lifetime = 0.0f;
     [SerializeField] private bool _isLifeTimeOver = false;
     [SerializeField] private float _seekRadius = 1.0f;
-    [SerializeField] private int _seekInterval = 3;
 
     [SerializeField] protected LayerMask _layer = default;
 

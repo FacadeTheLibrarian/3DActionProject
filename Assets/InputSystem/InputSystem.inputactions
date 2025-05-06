@@ -49,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Growth",
+                    "type": "Button",
+                    "id": "97eab447-56c5-4017-98c1-9b380a826552",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -199,7 +208,7 @@
                     "name": "",
                     "id": "df49c6b5-c603-4e13-9306-584ae1e63488",
                     "path": "<Gamepad>/buttonSouth",
-                    "interactions": "MultiTap",
+                    "interactions": "",
                     "processors": "",
                     "groups": "Main",
                     "action": "Dodge",
@@ -220,7 +229,7 @@
                 {
                     "name": "",
                     "id": "bc85e6a0-a835-4bd7-98fb-5762de7f9d4f",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -242,11 +251,33 @@
                 {
                     "name": "",
                     "id": "8dbaf648-98d5-4478-944e-a6b8c6f3a2a9",
-                    "path": "<Gamepad>/rightTrigger",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "SpecialAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "be488939-3b1c-490c-b05f-cc9acdda25cb",
+                    "path": "<Keyboard>/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Growth",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "498ca66f-ca4a-48d6-a645-e8950880ba4b",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Growth",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
