@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -47,6 +47,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     [SerializeField] private Vector3 _forward = default;
 
     //NOTE: 成長システム関連
+    [SerializeField] private PlayerCommonParticles _playerCommonParticles = default;
     [SerializeField] private InputActionReference _growthAction = default;
     [SerializeField] private BasePlayableMonster.e_generation _currentGeneration = BasePlayableMonster.e_generation.first;
     [SerializeField] private bool _isGrowthReady = false;
@@ -229,9 +230,11 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         if (!_isGrowthReady) {
             return;
         }
+        _playerCommonParticles.PlayParticle((int)AnimationParticleSelecter.e_playerCommon.growth);
         _monsterLead[(int)_currentGeneration].gameObject.SetActive(false);
         _currentGeneration++;
         _monsterLead[(int)_currentGeneration].gameObject.SetActive(true);
+        _animator[(int)_currentGeneration].Play("Growth");
     }
 
 

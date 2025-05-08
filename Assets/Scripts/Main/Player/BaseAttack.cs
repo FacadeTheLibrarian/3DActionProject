@@ -14,8 +14,9 @@ internal class BaseAttack : MonoBehaviour {
     [SerializeField] protected Vector3 _boxSize = Vector3.one;
 
     protected IPlayer _player;
-    public void Initialization(in IPlayer playerHandler) {
+    public void Initialization(in IPlayer playerHandler, in LayerMask layer) {
         _player = playerHandler;
+        _layer = layer;
         InnerInitializatiton();
     }
 

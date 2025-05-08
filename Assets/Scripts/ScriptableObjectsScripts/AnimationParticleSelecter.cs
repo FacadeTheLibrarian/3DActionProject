@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "AnimationParticleSelecter", menuName = "ScriptableObjects/AnimationParticleSelecter")]
+[CreateAssetMenu(fileName = "AnimationParticleSelector", menuName = "ScriptableObjects/AnimationParticleSelector")]
 public class AnimationParticleSelecter : ScriptableObject {
+
+    public enum e_playerCommon {
+        growth = 0,
+    }
     public enum e_nagaParticles {
         bite = 0,
         flameThrower = 1,
