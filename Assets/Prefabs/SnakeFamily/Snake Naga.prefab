@@ -91,6 +91,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 595328ee90974e3418982b734e5a0b81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _layer:
+    serializedVersion: 2
+    m_Bits: 128
   _animator: {fileID: 5690206719507407223}
   _attacks:
   - {fileID: 3982357392904159093}
@@ -154,7 +157,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _layer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   _baseDamage: 8
   _initialCastOffset: {x: -1.5, y: 2, z: 4}
   _boxSize: {x: 3, y: 2, z: 3}
@@ -172,7 +175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _layer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   _baseDamage: 8
   _initialCastOffset: {x: 1.5, y: 2, z: 4}
   _boxSize: {x: 3, y: 2, z: 3}
@@ -190,7 +193,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _layer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   _baseDamage: 70
   _initialCastOffset: {x: 0, y: 2, z: 5}
   _boxSize: {x: 6, y: 2, z: 3}
@@ -208,7 +211,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _layer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   _baseDamage: 10
   _initialCastOffset: {x: 3, y: 2, z: 5}
   _boxSize: {x: 3, y: 2, z: 5}
@@ -229,7 +232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _layer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
   _baseDamage: 20
   _initialCastOffset: {x: -1, y: 2, z: 3}
   _boxSize: {x: 1, y: 1, z: 1}

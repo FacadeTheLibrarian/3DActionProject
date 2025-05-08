@@ -8,6 +8,7 @@ internal class BasePlayableMonster : MonoBehaviour {
         third = 2,
         max,
     }
+    [SerializeField] private LayerMask _layer = default;
     [SerializeField] private Animator _animator = default;
     [SerializeField] private List<BaseAttack> _attacks = new List<BaseAttack>();
 
@@ -23,7 +24,7 @@ internal class BasePlayableMonster : MonoBehaviour {
 
     public void Initialization(in IPlayer master) {
         foreach (BaseAttack attack in _attacks) {
-            attack.Initialization(master);
+            attack.Initialization(master, _layer);
         }
     }
 }
