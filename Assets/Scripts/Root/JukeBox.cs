@@ -13,7 +13,7 @@ internal sealed class JukeBox : IDisposable {
     private AudioClipAlbum _seAlbum = default;
 
     public JukeBox(in AudioSource bgmSource, in AudioSource seSource, in AudioClipAlbum bgmAlbum, in AudioClipAlbum seAlbum) {
-        if(_instance != null) {
+        if (_instance != null) {
             throw new Exception($"Constructor {this.GetType()} is called twice, this is not allowed since it is Singleton");
         }
         _instance = this;

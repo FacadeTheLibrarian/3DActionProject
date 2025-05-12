@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 internal class PlayerTimeBombProjectile : BaseProjectile {
@@ -52,9 +51,9 @@ internal class PlayerTimeBombProjectile : BaseProjectile {
 
         Vector3 acceleration = Vector3.zero;
         Vector3 difference = _targetPosition - currentPosition;
-        acceleration += (difference - _velocity * _timeLeftToHit) * 2.0f / (_timeLeftToHit * _timeLeftToHit);
+        acceleration += (difference - (_velocity * _timeLeftToHit)) * 2.0f / (_timeLeftToHit * _timeLeftToHit);
 
-        _timeLeftToHit -= Time.deltaTime; 
+        _timeLeftToHit -= Time.deltaTime;
         if (_timer - _timeLeftToHit >= _timer) {
             End();
             return;

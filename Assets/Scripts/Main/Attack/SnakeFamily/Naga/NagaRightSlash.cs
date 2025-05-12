@@ -1,5 +1,4 @@
-﻿using SimpleMan.VisualRaycast;
-using System.Collections.Generic;
+using SimpleMan.VisualRaycast;
 using UnityEngine;
 internal sealed class NagaRightSlash : BaseAttack {
     public void RightSlash() {

@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
 using SimpleMan.VisualRaycast;
+using UnityEngine;
 
 internal sealed class NagaBite : BaseAttack {
 

@@ -1,4 +1,3 @@
-﻿using System.Collections.Generic;
 using UnityEngine;
 
 internal sealed class PlayerDirection {
@@ -27,7 +26,7 @@ internal sealed class PlayerDirection {
     public void UpdateForward(Vector2 inputAxis) {
         float cameraAngle = Camera.main.transform.localRotation.eulerAngles.y;
 
-        float radian = Mathf.Atan2(inputAxis.y, -inputAxis.x) + cameraAngle * Mathf.Deg2Rad;
+        float radian = Mathf.Atan2(inputAxis.y, -inputAxis.x) + (cameraAngle * Mathf.Deg2Rad);
         float degree = radian * Mathf.Rad2Deg;
 
         _positionHandler.rotation = Quaternion.Euler(_positionHandler.rotation.eulerAngles.x, degree - UNITY_DEGREE_ADJUSTMENT, _positionHandler.rotation.eulerAngles.z);

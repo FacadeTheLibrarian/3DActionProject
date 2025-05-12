@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-internal sealed class MainRoot : MonoBehaviour, ISceneController{
-	
+internal sealed class MainRoot : MonoBehaviour, ISceneController {
+
     private const e_sceneIndex MYSELF = e_sceneIndex.main;
     private e_sceneIndex _nextScene = MYSELF;
 
-    [SerializeField] InputActionAsset _assets = default;
+    [SerializeField] private InputActionAsset _assets = default;
 
     [SerializeField] private PlayerRoot _player = default;
     public e_sceneIndex GetToken() {

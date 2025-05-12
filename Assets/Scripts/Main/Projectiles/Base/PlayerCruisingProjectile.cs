@@ -1,6 +1,5 @@
-﻿using SimpleMan.VisualRaycast;
-using System;
 using System.Collections;
+using SimpleMan.VisualRaycast;
 using UnityEngine;
 
 internal class PlayerCruisingProjectile : BaseProjectile {

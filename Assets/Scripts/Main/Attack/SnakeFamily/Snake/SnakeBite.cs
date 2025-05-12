@@ -1,9 +1,8 @@
-﻿using SimpleMan.VisualRaycast;
-using System.Collections.Generic;
+using SimpleMan.VisualRaycast;
 using UnityEngine;
 
 internal sealed class SnakeBite : BaseAttack {
-    public void Bite(){
+    public void Bite() {
         Vector3 castPosition = GetInitialCastPosition();
 
         Transform playerTransform = _player.GetTransform();

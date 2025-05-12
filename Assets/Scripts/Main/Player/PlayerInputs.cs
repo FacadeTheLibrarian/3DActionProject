@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-internal sealed class PlayerInputs : MonoBehaviour{
+internal sealed class PlayerInputs : MonoBehaviour {
     public enum e_inputActions {
         move = 0,
         sprint = 1,
