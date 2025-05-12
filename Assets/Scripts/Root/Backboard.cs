@@ -21,7 +21,7 @@ internal sealed class Backboard : IDisposable {
 
     private static Backboard _instance = default;
     private Image _backboard = default;
-    
+
     private CancellationTokenSource _source = new CancellationTokenSource();
     private CancellationToken _token = default;
 
@@ -58,7 +58,7 @@ internal sealed class Backboard : IDisposable {
         _token = _source.Token;
 
         float deltaTime = SECOND / (fps * time);
-        int timeToSleep = (int)((SECOND / fps) * MILLI_SECOND);
+        int timeToSleep = (int)(SECOND / fps * MILLI_SECOND);
         float direction = _backboard.color.a < (float)targetAlpha ? RIGHT : LEFT;
 
         while (true) {
@@ -71,8 +71,7 @@ internal sealed class Backboard : IDisposable {
 
             try {
                 await Task.Delay(timeToSleep, _token);
-            }
-            catch {
+            } catch {
                 Debug.LogWarning($"NewBackboard.ControllBackboardAsync is cancelled.\n This is a handled cancel");
                 return;
             }

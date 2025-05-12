@@ -47,7 +47,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     [SerializeField] private Vector3 _forward = default;
 
     //NOTE: 成長システム関連
-    [SerializeField] private PlayerCommonParticles _playerCommonParticles = default;
+    [SerializeField] private PlayerGrowthParticlesController _playerCommonParticles = default;
     [SerializeField] private InputActionReference _growthAction = default;
     [SerializeField] private BasePlayableMonster.e_generation _currentGeneration = BasePlayableMonster.e_generation.first;
     [SerializeField] private bool _isGrowthReady = false;
@@ -61,11 +61,17 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         }
         private set {
             int addResult = _currentExp + value;
-            if (addResult > _expNeedToGrow) {
+            if (addResult < _expNeedToGrow) {
+                _currentExp = addResult;
+            }
+            if (_currentGeneration < BasePlayableMonster.e_generation.third) {
                 _isGrowthReady = true;
                 OnGrowthReady();
+            } else {
+                OnNonGrowthReady();
             }
             _currentExp = addResult;
+
         }
     }
 
@@ -206,7 +212,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         //TODO: カメラがイベント発行者のリアクティブプロパティにしたらどうだろうか検討
         float cameraAngle = _mainCamera.transform.localRotation.eulerAngles.y;
 
-        float radian = Mathf.Atan2(direction.y, -direction.x) + cameraAngle * Mathf.Deg2Rad;
+        float radian = Mathf.Atan2(direction.y, -direction.x) + (cameraAngle * Mathf.Deg2Rad);
         float degree = radian * Mathf.Rad2Deg;
 
         this.transform.rotation = Quaternion.Euler(this.transform.rotation.eulerAngles.x, degree - UNITY_DEGREE_ADJUSTMENT, this.transform.rotation.eulerAngles.z);
@@ -225,19 +231,25 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     private void OnGrowthReady() {
 
     }
+    private void OnNonGrowthReady() {
+
+    }
 
     private void OnGrowth(InputAction.CallbackContext context) {
         if (!_isGrowthReady) {
             return;
         }
-        _playerCommonParticles.PlayParticle((int)AnimationParticleSelecter.e_playerCommon.growth);
+        _playerCommonParticles.PlayParticle(OnGrowthEvent, 0.125f);
         _monsterLead[(int)_currentGeneration].gameObject.SetActive(false);
+
+        _isGrowthReady = false;
+    }
+
+    private void OnGrowthEvent() {
         _currentGeneration++;
         _monsterLead[(int)_currentGeneration].gameObject.SetActive(true);
         _animator[(int)_currentGeneration].Play("Growth");
     }
-
-
     //移動関連
     public void HorizontalMove() {
         UpdateVerticalSpeed();

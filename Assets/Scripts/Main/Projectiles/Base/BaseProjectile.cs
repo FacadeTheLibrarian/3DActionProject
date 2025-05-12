@@ -1,4 +1,3 @@
-﻿using System.Collections.Generic;
 using UnityEngine;
 
 internal class BaseProjectile : MonoBehaviour, IPoolableObjects {

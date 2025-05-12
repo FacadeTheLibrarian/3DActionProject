@@ -1,6 +1,4 @@
-using System;
 using System.Runtime.CompilerServices;
-using UnityEngine;
 
 internal sealed class MathUtility {
 
@@ -23,15 +21,15 @@ internal sealed class MathUtility {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int CirculerAddition(int value, int addend, int min, int max) {
         int raw = value + addend;
-        if(raw > max) return min;
-        if(raw < min) return max;
+        if (raw > max) return min;
+        if (raw < min) return max;
         return raw;
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int CirculerSubtraction(int value, int addend, int min, int max) {
         int raw = value - addend;
-        if(raw > max) return min;
-        if(raw < min) return max;
+        if (raw > max) return min;
+        if (raw < min) return max;
         return raw;
     }
 }

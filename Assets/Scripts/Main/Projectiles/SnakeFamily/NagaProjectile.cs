@@ -1,5 +1,4 @@
-﻿using SimpleMan.VisualRaycast;
-using System.Collections.Generic;
+using SimpleMan.VisualRaycast;
 using UnityEngine;
 
 internal sealed class NagaProjectile : PlayerTimeBombProjectile {

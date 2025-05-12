@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 internal interface IInputs {
-	public void SetUp();
-	public Vector2 GetAxis();
+    void SetUp();
+    Vector2 GetAxis();
 }

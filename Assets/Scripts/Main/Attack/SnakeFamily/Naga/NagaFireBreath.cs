@@ -1,7 +1,5 @@
-﻿using SimpleMan.VisualRaycast;
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
+using SimpleMan.VisualRaycast;
 using UnityEngine;
 
 internal sealed class NagaFireBreath : BaseAttack {
@@ -15,7 +13,7 @@ internal sealed class NagaFireBreath : BaseAttack {
     private int _executedCasts = 0;
     private float _timeAccumeration = 0.0f;
     private float _castInterval = 0.0f;
-    
+
 
     //FIXME: リファクタリング必須
     public void FireBreath() {

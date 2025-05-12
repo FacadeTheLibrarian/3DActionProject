@@ -1,4 +1,3 @@
-﻿using System.Collections.Generic;
 using UnityEngine;
 
 internal sealed class NagaTripletFireBall : BaseAttack {
@@ -26,7 +25,7 @@ internal sealed class NagaTripletFireBall : BaseAttack {
         Vector3 forward = _player.GetForward();
         int modifiedBaseDamage = (int)(_baseDamage * _player.GetAttackFactor());
         int modifiedExplosionDamage = (int)(_explosiveDamage * _player.GetAttackFactor());
-        
+
         PullTrigger(GetInitialCastPosition(), forward, _initialVelocity, modifiedBaseDamage, modifiedExplosionDamage);
     }
 
@@ -36,12 +35,12 @@ internal sealed class NagaTripletFireBall : BaseAttack {
         Vector3 leftDiagonal = Quaternion.AngleAxis(-_shotAngle, Vector3.up) * forward;
 
         PlayerTimeBombProjectile leftInstance = _pool.GetPooledObject();
-        leftInstance.Fire(currentPosition, forward, currentPosition + leftDiagonal * _distance, leftDiagonal * initialVelocity, mainDamage, subDamage, _layer, _projectileLifetime);
+        leftInstance.Fire(currentPosition, forward, currentPosition + (leftDiagonal * _distance), leftDiagonal * initialVelocity, mainDamage, subDamage, _layer, _projectileLifetime);
 
         PlayerTimeBombProjectile centerInstance = _pool.GetPooledObject();
-        centerInstance.Fire(currentPosition + modifiedOffset, forward, currentPosition + forward * _distance, forward * initialVelocity, mainDamage, subDamage, _layer, _projectileLifetime);
+        centerInstance.Fire(currentPosition + modifiedOffset, forward, currentPosition + (forward * _distance), forward * initialVelocity, mainDamage, subDamage, _layer, _projectileLifetime);
 
         PlayerTimeBombProjectile rightInstance = _pool.GetPooledObject();
-        rightInstance.Fire(currentPosition + modifiedOffset * 2.0f, forward, currentPosition + rightDiagonal * _distance, rightDiagonal * initialVelocity, mainDamage, subDamage, _layer, _projectileLifetime);
+        rightInstance.Fire(currentPosition + (modifiedOffset * 2.0f), forward, currentPosition + (rightDiagonal * _distance), rightDiagonal * initialVelocity, mainDamage, subDamage, _layer, _projectileLifetime);
     }
 }

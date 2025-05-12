@@ -1,5 +1,3 @@
-﻿using SimpleMan.VisualRaycast;
-using System;
 using System.Collections;
 using UnityEngine;
 
@@ -58,7 +56,7 @@ internal class BasePlayerHomingProjectile : MonoBehaviour, IPoolableObjects {
 
         Vector3 acceleration = Vector3.zero;
         Vector3 difference = _targetPosition - currentPosition;
-        acceleration += (difference - _velocity * _timeLeftToHit) * 2.0f / (_timeLeftToHit * _timeLeftToHit);
+        acceleration += (difference - (_velocity * _timeLeftToHit)) * 2.0f / (_timeLeftToHit * _timeLeftToHit);
 
         _timeLeftToHit -= Time.deltaTime;
         if (difference.magnitude < 0.5f) {
