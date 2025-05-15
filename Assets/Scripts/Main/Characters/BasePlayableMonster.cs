@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 
 internal class BasePlayableMonster : MonoBehaviour {
@@ -8,7 +8,7 @@ internal class BasePlayableMonster : MonoBehaviour {
         third = 2,
         max,
     }
-    [SerializeField] private LayerMask _layer = default;
+    [SerializeField] private LayerMask _attackLayer = default;
     [SerializeField] private Animator _animator = default;
     [SerializeField] private List<BaseAttack> _attacks = new List<BaseAttack>();
 
@@ -19,12 +19,11 @@ internal class BasePlayableMonster : MonoBehaviour {
     }
 #endif
 
-
     public Animator GetAnimator => _animator;
 
     public void Initialization(in IPlayer master) {
         foreach (BaseAttack attack in _attacks) {
-            attack.Initialization(master, _layer);
+            attack.Initialization(master, _attackLayer);
         }
     }
 }

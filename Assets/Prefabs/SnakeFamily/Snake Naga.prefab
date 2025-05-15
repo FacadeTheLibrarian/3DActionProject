@@ -235,7 +235,7 @@ MonoBehaviour:
     m_Bits: 0
   _baseDamage: 20
   _initialCastOffset: {x: -1, y: 2, z: 3}
-  _boxSize: {x: 1, y: 1, z: 1}
+  _boxSize: {x: 0, y: 0, z: 0}
   _prefab: {fileID: 3699434947280913478, guid: 09469130ced2ebc4f8386c938bbb91fe, type: 3}
   _offset: {x: 1, y: 0, z: 0}
   _explosiveDamage: 30

@@ -13,11 +13,10 @@ internal sealed class PlayerGrowthParticlesController : MonoBehaviour {
 
     private IEnumerator OnParticlePlaying(float duration, float timeAheadOfEnd, Action callback) {
         float timeToCall = duration - timeAheadOfEnd;
-        float timeAccumeration = 0.0f;
+        float timeAccumulation = 0.0f;
         while (true) {
-            timeAccumeration += Time.deltaTime;
-            if (timeToCall < timeAccumeration) {
-                Debug.Log("Action");
+            timeAccumulation += Time.deltaTime;
+            if (timeToCall < timeAccumulation) {
                 callback.Invoke();
                 yield break;
             }

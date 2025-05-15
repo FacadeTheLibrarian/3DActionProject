@@ -8,4 +8,9 @@ internal sealed class MonsterSetData : ScriptableObject {
             return _monsterData[index];
         }
     }
+
+    public BasePlayableMonster SummonMonster(int index, in Transform parent) {
+        BasePlayableMonster instance = Instantiate(_monsterData[index], parent);
+        return instance;
+    }
 }
