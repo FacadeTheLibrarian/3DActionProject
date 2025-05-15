@@ -1,9 +1,9 @@
+using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
-
 
     //NOTE: 接地判定定数
     private const float GROUND_OFFSET = -0.5f;
@@ -35,7 +35,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     [SerializeField] private MonsterSetData _monsterPrefab = default;
     [SerializeField] private Camera _mainCamera = default;
 
-    [SerializeField] private BasePlayableMonster[] _monsterLead = new BasePlayableMonster[(int)BasePlayableMonster.e_generation.max];
+    [SerializeField] private BasePlayableMonster[] _monsterHandler = new BasePlayableMonster[(int)BasePlayableMonster.e_generation.max];
     [SerializeField] private Animator[] _animator = new Animator[(int)BasePlayableMonster.e_generation.max];
 
     [SerializeField] private InputActionReference _moveAction = default;
@@ -50,6 +50,8 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     [SerializeField] private PlayerGrowthParticlesController _playerCommonParticles = default;
     [SerializeField] private InputActionReference _growthAction = default;
     [SerializeField] private BasePlayableMonster.e_generation _currentGeneration = BasePlayableMonster.e_generation.first;
+    public BasePlayableMonster.e_generation GetCurrentGeneration => _currentGeneration;
+
     [SerializeField] private bool _isGrowthReady = false;
 
     [SerializeField] private int _expNeedToGrow = 0;
@@ -94,6 +96,9 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     [SerializeField] private float _dodgeForce = 0.0f;
 
     //NOTE: スタミナ関連
+    private FloatReactiveProperty _currentStamina = new FloatReactiveProperty(STAMINA_MAX);
+    public IReadOnlyReactiveProperty<float> CurrentStamina => _currentStamina;
+
     [SerializeField] private float _stamina = STAMINA_MAX;
     [SerializeField] private bool _isRunOutOfStamina = false;
 
@@ -136,7 +141,6 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _growthAction.action.started += OnGrowth;
         _growthAction.action.Enable();
 
-
         _normalAttackAction.action.started += NormalAttack;
         _normalAttackAction.action.Enable();
 
@@ -144,9 +148,9 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _specialAttackAction.action.Enable();
 
         for (int i = 0; i < (int)BasePlayableMonster.e_generation.max; i++) {
-            _monsterLead[i] = Instantiate(_monsterPrefab[i], this.transform);
-            _monsterLead[i].Initialization(this);
-            _animator[i] = _monsterLead[i].GetAnimator;
+            _monsterHandler[i] = Instantiate(_monsterPrefab[i], this.transform);
+            _monsterHandler[i].Initialization(this);
+            _animator[i] = _monsterHandler[i].GetAnimator;
 
             //NOTE: 後方互換性のためにfalseになっているため、trueにするべきとのこと
             //      SEE -> https://www.youtube.com/watch?v=oF-nby5JBSw&t=251s ;
@@ -160,7 +164,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
             }
 
             if (i >= 1) {
-                _monsterLead[i].gameObject.SetActive(false);
+                _monsterHandler[i].gameObject.SetActive(false);
             }
         }
     }
@@ -190,6 +194,8 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
                 behaviour.OnEndAttackPublisher -= EndAttack;
             }
         }
+
+        _currentStamina.Dispose();
     }
     //インターフェース実装
     public Transform GetTransform() {
@@ -197,10 +203,6 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     }
     public Vector3 GetForward() {
         return _forward;
-    }
-
-    public float GetScaleY() {
-        return this.transform.localScale.y;
     }
     public float GetAttackFactor() {
         return _attackPowerFactor;
@@ -240,14 +242,14 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
             return;
         }
         _playerCommonParticles.PlayParticle(OnGrowthEvent, 0.125f);
-        _monsterLead[(int)_currentGeneration].gameObject.SetActive(false);
+        _monsterHandler[(int)_currentGeneration].gameObject.SetActive(false);
 
         _isGrowthReady = false;
     }
 
     private void OnGrowthEvent() {
         _currentGeneration++;
-        _monsterLead[(int)_currentGeneration].gameObject.SetActive(true);
+        _monsterHandler[(int)_currentGeneration].gameObject.SetActive(true);
         _animator[(int)_currentGeneration].Play("Growth");
     }
     //移動関連
@@ -257,20 +259,22 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
             return;
         }
         float targetSpeed = 0.0f;
-        //FIXME: なおして
+        //FIXME: 複雑すぎる
         if (!_isOnAttack) {
             if (_hasMoveInput) {
                 if (_hasSprintInput) {
                     UseStamina(STAMINA_BASE_CONSUMPTION_ON_SPRINT);
                 }
-                targetSpeed = _hasSprintInput ? _currentSprintSpeed : _currentMoveSpeed;
+                //targetSpeed = _hasSprintInput ? _currentSprintSpeed : _currentMoveSpeed;
                 UpdateForward();
             }
         }
-
-        _currentHorizontalVelocity = Mathf.Lerp(_currentHorizontalVelocity, targetSpeed, SPEED_CHANGE_RATE);
+        Vector2 input = _moveAction.action.ReadValue<Vector2>();
+        float magnitude = input.magnitude;
+        //_currentHorizontalVelocity = Mathf.Lerp(_currentHorizontalVelocity, targetSpeed, SPEED_CHANGE_RATE);
+        _currentHorizontalVelocity = magnitude * SPRINT_SPEED;
         Vector3 force = new Vector3(_forward.x * _currentHorizontalVelocity, -_verticalVelocity, _forward.z * _currentHorizontalVelocity);
-        _animator[(int)_currentGeneration].SetFloat("Speed", _currentHorizontalVelocity / _currentSprintSpeed);
+        _animator[(int)_currentGeneration].SetFloat("Speed", magnitude);
         _controller.Move(force * Time.deltaTime);
 
         if (_hasMoveInput) {
@@ -301,7 +305,6 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         return Physics.CheckSphere(spherePosition, GROUNDED_RADIUS, _layer,
             QueryTriggerInteraction.Ignore);
     }
-
 
     //NOTE: 回避関連
     private void StartDodge(InputAction.CallbackContext context) {
@@ -341,7 +344,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
 
     //NOTE: スタミナ関連
     private void UseStamina(float amount) {
-        _stamina -= amount;
+        _currentStamina.Value -= amount;
         if (_stamina <= 0.0f) {
             //NOTE: ここイベントでいいかも？
             _hasSprintInput = false;
@@ -369,7 +372,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     }
 
     public void UpdateStaminaBar() {
-        _staminaBar.fillAmount = _stamina / _staminaMax;
+        //_staminaBar.fillAmount = _stamina / _staminaMax;
     }
 
     //NOTE: 攻撃関連
@@ -422,19 +425,19 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
 #if UNITY_EDITOR
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            _monsterLead[(int)_currentGeneration].gameObject.SetActive(false);
+            _monsterHandler[(int)_currentGeneration].gameObject.SetActive(false);
             _currentGeneration = BasePlayableMonster.e_generation.first;
-            _monsterLead[(int)_currentGeneration].gameObject.SetActive(true);
+            _monsterHandler[(int)_currentGeneration].gameObject.SetActive(true);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            _monsterLead[(int)_currentGeneration].gameObject.SetActive(false);
+            _monsterHandler[(int)_currentGeneration].gameObject.SetActive(false);
             _currentGeneration = BasePlayableMonster.e_generation.second;
-            _monsterLead[(int)_currentGeneration].gameObject.SetActive(true);
+            _monsterHandler[(int)_currentGeneration].gameObject.SetActive(true);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3)) {
-            _monsterLead[(int)_currentGeneration].gameObject.SetActive(false);
+            _monsterHandler[(int)_currentGeneration].gameObject.SetActive(false);
             _currentGeneration = BasePlayableMonster.e_generation.third;
-            _monsterLead[(int)_currentGeneration].gameObject.SetActive(true);
+            _monsterHandler[(int)_currentGeneration].gameObject.SetActive(true);
         }
     }
 #endif

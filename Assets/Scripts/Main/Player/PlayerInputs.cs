@@ -21,15 +21,18 @@ internal sealed class PlayerInputs : MonoBehaviour {
     [SerializeField] private InputActionAsset _actionAsset = default;
     [SerializeField] private InputAction[] _actions = new InputAction[(int)e_inputActions.max];
 
+    public InputAction this[e_inputActions index] {
+        get { return _actions[(int)index]; }
+    }
+
     public void SetUp() {
         _actions = new InputAction[(int)e_inputActions.max];
         for (int i = 0; i < (int)e_inputActions.max; i++) {
             _actions[i] = _actionAsset.FindAction(INPUT_ACTIONS_NAMES[i]);
         }
-    }
 
-    public Vector2 GetAxis() {
-        Vector2 input = _actions[(int)e_inputActions.move].ReadValue<Vector2>();
-        return input;
+        foreach (InputAction action in _actions) {
+            action.Enable();
+        }
     }
 }
