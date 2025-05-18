@@ -15,6 +15,7 @@ internal sealed class SnakeletFireBall : BaseAttack {
     }
 
     public void Fire() {
+        _stamina.UseStamina(_baseStaminaConsumption);
         Transform playerPosition = _playerTransform;
         Vector3 forward = _direction.GetCachedForward();
         int modifiedBaseDamage = (int)(_baseDamage * _attackFactor.GetAttackFactor);

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-internal class BaseParticlePlayer : MonoBehaviour {
+internal abstract class BaseParticlePlayer : MonoBehaviour {
     [SerializeField] protected AnimationParticleSelecter _selecter = default;
     [SerializeField] private List<ParticleSystem> _particles = default;
 

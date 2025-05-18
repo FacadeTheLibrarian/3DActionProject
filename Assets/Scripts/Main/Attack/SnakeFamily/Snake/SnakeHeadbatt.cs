@@ -3,6 +3,7 @@ using UnityEngine;
 
 internal sealed class SnakeHeadbatt : BaseAttack {
     public void Headbatt() {
+        _stamina.UseStamina(_baseStaminaConsumption);
         Vector3 castPosition = GetInitialCastPosition();
 
         Transform playerTransform = _playerTransform;

@@ -16,6 +16,7 @@ internal sealed class NagaFireBreath : BaseAttack {
 
     //FIXME: リファクタリング必須
     public void FireBreath() {
+        _stamina.UseStamina(_baseStaminaConsumption);
         float clipLength = _animator.GetCurrentAnimatorStateInfo(0).length;
         _castInterval = clipLength / _castIteration;
         _current = GetInitialCastPosition();

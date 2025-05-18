@@ -3,17 +3,25 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 internal sealed class PlayerAttack : MonoBehaviour {
-    [SerializeField] private AnimationStateController _animator = default;
-    [SerializeField] private InputAction _normalAttack = default;
-    [SerializeField] private InputAction _specialAttack = default;
+    private enum e_attackType : int {
+        normal = 0,
+        special = 1,
+    }
+
+    [SerializeField] private AnimationStateController _animationStateController = default;
+    private InputAction _normalAttack = default;
+    private InputAction _specialAttack = default;
+    //REVIEW: Directionは本当にキャッシュするべきか？使わなければ消す
     [SerializeField] private PlayerDirection _direction = default;
+    [SerializeField] private PlayerStamina _stamina = default;
 
     private PlayerAttackFactor _attackFactor = default;
 
-    public void Initialization(in PlayerInputs inputs, in AnimationStateController animator, in PlayerDirection direction, in MonsterHandler handler) {
+    public void Initialization(in PlayerInputs inputs, in AnimationStateController animationController, in PlayerDirection direction, in MonsterHandler handler, in PlayerStamina stamina) {
         _attackFactor = new PlayerAttackFactor();
-        _animator = animator;
+        _animationStateController = animationController;
         _direction = direction;
+        _stamina = stamina;
 
         _normalAttack = inputs[PlayerInputs.e_inputActions.normalAttack];
         _normalAttack.started += NormalAttack;
@@ -24,7 +32,7 @@ internal sealed class PlayerAttack : MonoBehaviour {
         _specialAttack.Enable();
 
         for (int i = 0; i < (int)MonsterHandler.e_generation.max; i++) {
-            handler[i].SetAttack(this.transform, _direction, _attackFactor);
+            handler[i].SetAttack(this.transform, _direction, _attackFactor, _stamina);
         }
     }
 
@@ -36,11 +44,16 @@ internal sealed class PlayerAttack : MonoBehaviour {
     }
 
     private void NormalAttack(InputAction.CallbackContext context) {
-
-        _animator.SetAttack(0);
+        if (_stamina.IsRunOutOfStamina) {
+            return;
+        }
+        _animationStateController.SetAttack((int)e_attackType.normal);
     }
 
     private void SpecialAttack(InputAction.CallbackContext context) {
-        _animator.SetAttack(1);
+        if (_stamina.IsRunOutOfStamina) {
+            return;
+        }
+        _animationStateController.SetAttack((int)e_attackType.special);
     }
 }
