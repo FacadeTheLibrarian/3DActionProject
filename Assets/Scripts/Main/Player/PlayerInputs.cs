@@ -1,7 +1,10 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 internal sealed class PlayerInputs : MonoBehaviour {
+    //FIXME: なぜPlayerInputsのe_inputActionsを入力が必要なクラスが知る必要があるのか
+    //       オーケストレーションかファサードからCIで渡すべきだと思う
     public enum e_inputActions {
         move = 0,
         sprint = 1,
@@ -19,18 +22,19 @@ internal sealed class PlayerInputs : MonoBehaviour {
     };
 
     [SerializeField] private InputActionAsset _actionAsset = default;
-    [SerializeField] private InputAction[] _actions = new InputAction[(int)e_inputActions.max];
+    private InputAction[] _actions = new InputAction[(int)e_inputActions.max];
 
     public InputAction this[e_inputActions index] {
         get { return _actions[(int)index]; }
     }
 
     public void SetUp() {
-        _actions = new InputAction[(int)e_inputActions.max];
         for (int i = 0; i < (int)e_inputActions.max; i++) {
             _actions[i] = _actionAsset.FindAction(INPUT_ACTIONS_NAMES[i]);
         }
+    }
 
+    public void StartAcceptInput() {
         foreach (InputAction action in _actions) {
             action.Enable();
         }

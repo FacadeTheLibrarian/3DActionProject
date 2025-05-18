@@ -1,8 +1,12 @@
-using System.Collections.Generic;
-using UnityEngine;
-
-internal sealed class PlayerAttackFactor : MonoBehaviour {
+internal sealed class PlayerAttackFactor{
 	private float _attackFactor = 1.0f;
+
+    public PlayerAttackFactor() {
+        _attackFactor = 1.0f;
+    }
+    public PlayerAttackFactor(float attackFactor) {
+        _attackFactor = attackFactor;
+    }
 
     public float GetAttackFactor {
         get {

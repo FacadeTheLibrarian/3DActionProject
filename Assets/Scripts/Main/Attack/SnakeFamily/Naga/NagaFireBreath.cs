@@ -14,7 +14,6 @@ internal sealed class NagaFireBreath : BaseAttack {
     private float _timeAccumeration = 0.0f;
     private float _castInterval = 0.0f;
 
-
     //FIXME: リファクタリング必須
     public void FireBreath() {
         float clipLength = _animator.GetCurrentAnimatorStateInfo(0).length;
@@ -22,17 +21,17 @@ internal sealed class NagaFireBreath : BaseAttack {
         _current = GetInitialCastPosition();
         _executedCasts = 0;
 
-        Vector3 forward = _player.GetForward();
+        Vector3 forward = _direction.GetCachedForward();
         _addend = Quaternion.LookRotation(forward, Vector3.up) * _offsetParCast;
 
-        Transform playerTransform = _player.GetTransform();
+        Transform playerTransform = _playerTransform ;
         Collider[] results = ComponentExtension.BoxOverlap(playerTransform, _current, _boxSize, playerTransform.rotation, _layer, true);
         _executedCasts++;
         _current += _addend;
 
         foreach (Collider collider in results) {
             if (collider.TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
-                possibleEnemy.GetHit((int)(_baseDamage * _player.GetAttackFactor()), _player.GetForward());
+                possibleEnemy.GetHit((int)(_baseDamage * _attackFactor.GetAttackFactor), _direction.GetCachedForward());
             }
         }
         StartCoroutine(OnAttack());
@@ -46,13 +45,13 @@ internal sealed class NagaFireBreath : BaseAttack {
             if (_timeAccumeration > _castInterval) {
                 _timeAccumeration = 0.0f;
 
-                Transform playerTransform = _player.GetTransform();
+                Transform playerTransform = _playerTransform;
                 Collider[] results = ComponentExtension.BoxOverlap(playerTransform, _current, _boxSize, playerTransform.rotation, _layer, true);
                 _executedCasts++;
 
                 foreach (Collider collider in results) {
                     if (collider.TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
-                        possibleEnemy.GetHit((int)(_baseDamage * _player.GetAttackFactor()), _player.GetForward());
+                        possibleEnemy.GetHit((int)(_baseDamage * _attackFactor.GetAttackFactor), _direction.GetCachedForward());
                     }
                 }
                 _current += _addend;

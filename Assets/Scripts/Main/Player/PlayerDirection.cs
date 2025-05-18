@@ -3,9 +3,10 @@ using UnityEngine;
 internal sealed class PlayerDirection : MonoBehaviour {
     private const float UNITY_DEGREE_ADJUSTMENT = 90.0f;
 
-    [SerializeField] private Camera _mainCamera = default;
+    private Camera _mainCamera = default;
     private Vector3 _forward = default;
-    public Vector3 GetConvert(in Vector3 forward){
+    public Vector3 GetCachedForward() => _forward;
+    public Vector3 RightConvert(in Vector3 forward){
             Vector3 right = new Vector3(forward.z, 0.0f, -forward.x);
             return right;
     }
@@ -14,7 +15,12 @@ internal sealed class PlayerDirection : MonoBehaviour {
             return left;
     }
 
-    public Vector3 GetForward(in Vector2 inputAxis) {
+    public void SetUp(in Camera mainCamera) {
+        _mainCamera = mainCamera;
+        _forward = this.transform.forward;
+    }
+
+    public Vector3 GetUpdatedForward(in Vector2 inputAxis) {
         float cameraAngle = _mainCamera.transform.localRotation.eulerAngles.y;
 
         float radian = Mathf.Atan2(inputAxis.y, -inputAxis.x) + (cameraAngle * Mathf.Deg2Rad);
