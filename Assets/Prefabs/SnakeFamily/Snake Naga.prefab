@@ -5057,6 +5057,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _baseDamage: 8
+  _baseStaminaConsumption: 10
   _initialCastOffset: {x: -1.5, y: 2, z: 4}
   _boxSize: {x: 3, y: 2, z: 3}
 --- !u!114 &8946215959266197503
@@ -5075,6 +5076,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _baseDamage: 8
+  _baseStaminaConsumption: 10
   _initialCastOffset: {x: 1.5, y: 2, z: 4}
   _boxSize: {x: 3, y: 2, z: 3}
 --- !u!114 &1857850602270455132
@@ -5093,6 +5095,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _baseDamage: 70
+  _baseStaminaConsumption: 10
   _initialCastOffset: {x: 0, y: 2, z: 5}
   _boxSize: {x: 6, y: 2, z: 3}
 --- !u!114 &5490727296942798620
@@ -5111,6 +5114,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _baseDamage: 10
+  _baseStaminaConsumption: 10
   _initialCastOffset: {x: 3, y: 2, z: 5}
   _boxSize: {x: 3, y: 2, z: 5}
   _animator: {fileID: 5690206719507407223}
@@ -5132,6 +5136,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   _baseDamage: 20
+  _baseStaminaConsumption: 50
   _initialCastOffset: {x: 0, y: 2, z: 3}
   _boxSize: {x: 0, y: 0, z: 0}
   _prefab: {fileID: 3699434947280913478, guid: 09469130ced2ebc4f8386c938bbb91fe, type: 3}

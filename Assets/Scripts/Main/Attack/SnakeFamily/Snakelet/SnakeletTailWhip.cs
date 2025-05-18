@@ -3,6 +3,7 @@ using UnityEngine;
 
 internal sealed class SnakeletTailWhip : BaseAttack {
     public void TailWhip() {
+        _stamina.UseStamina(_baseStaminaConsumption);
         Vector3 castPosition = GetInitialCastPosition();
 
         Transform playerTransform = _playerTransform;

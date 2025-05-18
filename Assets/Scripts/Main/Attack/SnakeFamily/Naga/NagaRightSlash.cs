@@ -2,6 +2,7 @@ using SimpleMan.VisualRaycast;
 using UnityEngine;
 internal sealed class NagaRightSlash : BaseAttack {
     public void RightSlash() {
+        _stamina.UseStamina(_baseStaminaConsumption);
         Vector3 castPosition = GetInitialCastPosition();
 
         Transform playerTransform = _playerTransform;

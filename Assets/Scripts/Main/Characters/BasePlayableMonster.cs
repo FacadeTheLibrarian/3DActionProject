@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 internal class BasePlayableMonster : MonoBehaviour {
@@ -15,9 +14,9 @@ internal class BasePlayableMonster : MonoBehaviour {
     }
 #endif
 
-    public void SetAttack(in Transform playerPosition, in PlayerDirection direction, in PlayerAttackFactor attackFactor) {
+    public void SetAttack(in Transform playerPosition, in PlayerDirection direction, in PlayerAttackFactor attackFactor, in PlayerStamina stamina) {
         foreach (BaseAttack attack in _attacks) {
-            attack.Initialization(playerPosition, direction, attackFactor);
+            attack.Initialization(playerPosition, direction, attackFactor, stamina);
         }
     }
 }

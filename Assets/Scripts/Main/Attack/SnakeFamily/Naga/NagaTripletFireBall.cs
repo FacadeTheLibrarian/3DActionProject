@@ -19,9 +19,10 @@ internal sealed class NagaTripletFireBall : BaseAttack {
         _pool = new Pool<PlayerTimeBombProjectile>();
         _pool.MakePool(_prefab, QUEUE_MAX);
     }
-
+ 
     public void Fire() {
-        Transform playerPosition = _playerTransform ;
+        _stamina.UseStamina(_baseStaminaConsumption);
+        Transform playerPosition = _playerTransform;
         Vector3 forward = _direction.GetCachedForward();
         int modifiedBaseDamage = (int)(_baseDamage * _attackFactor.GetAttackFactor);
         int modifiedExplosionDamage = (int)(_explosiveDamage * _attackFactor.GetAttackFactor);
