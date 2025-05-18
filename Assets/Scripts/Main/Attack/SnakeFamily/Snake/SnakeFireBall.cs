@@ -14,10 +14,10 @@ internal sealed class SnakeFireBall : BaseAttack {
         _pool.MakePool(_prefab, QUEUE_MAX);
     }
     public void Fire() {
-        Transform playerPosition = _player.GetTransform();
-        Vector3 forward = _player.GetForward();
-        int modifiedBaseDamage = (int)(_baseDamage * _player.GetAttackFactor());
-        int modifiedExplosionDamage = (int)(_explosionDamage * _player.GetAttackFactor());
+        Transform playerPosition = _playerTransform;
+        Vector3 forward = _direction.GetCachedForward();
+        int modifiedBaseDamage = (int)(_baseDamage * _attackFactor.GetAttackFactor);
+        int modifiedExplosionDamage = (int)(_explosionDamage * _attackFactor.GetAttackFactor);
         PlayerCruisingProjectile instance = _pool.GetPooledObject();
         instance.Fire(GetInitialCastPosition(), forward, _initialVelocity, modifiedBaseDamage, modifiedExplosionDamage, _layer);
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +15,7 @@ internal sealed class Pool<T> where T : MonoBehaviour, IPoolableObjects {
         _prefab = prefab;
         for (int i = 0; i < poolSize; i++) {
             T instance = UnityEngine.Object.Instantiate(_prefab);
+            instance.gameObject.SetActive(false);
             _pool.Enqueue(instance);
         }
     }
@@ -31,12 +32,13 @@ internal sealed class Pool<T> where T : MonoBehaviour, IPoolableObjects {
         _pool.Clear();
     }
     public T GetPooledObject() {
-        if (_pool.Peek().GetIsOccupied()) {
+        if (_pool.Peek().gameObject.activeSelf) {
             T generatedInstance = UnityEngine.Object.Instantiate(_prefab);
             _pool.Enqueue(generatedInstance);
             return generatedInstance;
         }
         T instance = _pool.Dequeue();
+        instance.gameObject.SetActive(true);
         _pool.Enqueue(instance);
         return instance;
     }

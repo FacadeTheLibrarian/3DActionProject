@@ -5,10 +5,10 @@ internal class PlayerTimeBombProjectile : BaseProjectile {
 
     [SerializeField] private ParticleSystem _baseProjectileParticleHandler = default;
 
-    [SerializeField] private Vector3 _targetPosition = default;
-    [SerializeField] protected Vector3 _forward = default;
+    private Vector3 _targetPosition = default;
+    protected Vector3 _forward = default;
 
-    [SerializeField] private Vector3 _velocity = default;
+    private Vector3 _velocity = default;
 
     [SerializeField] private int _baseProjectileDamageAmount = 0;
     [SerializeField] protected int _subProjectileDamageAmount = 0;
@@ -18,7 +18,7 @@ internal class PlayerTimeBombProjectile : BaseProjectile {
     [SerializeField] private float _timeLeftToHit = 0.0f;
     [SerializeField] private bool _isLifeTimeOver = false;
 
-    [SerializeField] protected LayerMask _layer = default;
+    protected LayerMask _layer = default;
 
     public void Fire(in Vector3 currentPosition, in Vector3 forward, in Vector3 staticTargetPosition, in Vector3 initialVelocity, int mainDamage, int subDamage, in LayerMask layer, float timer) {
         _isLifeTimeOver = false;

@@ -35,8 +35,8 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     [SerializeField] private MonsterSetData _monsterPrefab = default;
     [SerializeField] private Camera _mainCamera = default;
 
-    [SerializeField] private BasePlayableMonster[] _monsterHandler = new BasePlayableMonster[(int)BasePlayableMonster.e_generation.max];
-    [SerializeField] private Animator[] _animator = new Animator[(int)BasePlayableMonster.e_generation.max];
+    [SerializeField] private BasePlayableMonster[] _monsterHandler = new BasePlayableMonster[(int)MonsterHandler.e_generation.max];
+    [SerializeField] private Animator[] _animator = new Animator[(int)MonsterHandler.e_generation.max];
 
     [SerializeField] private InputActionReference _moveAction = default;
     [SerializeField] private InputActionReference _sprintAction = default;
@@ -49,8 +49,8 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     //NOTE: 成長システム関連
     [SerializeField] private PlayerGrowthParticlesController _playerCommonParticles = default;
     [SerializeField] private InputActionReference _growthAction = default;
-    [SerializeField] private BasePlayableMonster.e_generation _currentGeneration = BasePlayableMonster.e_generation.first;
-    public BasePlayableMonster.e_generation GetCurrentGeneration => _currentGeneration;
+    [SerializeField] private MonsterHandler.e_generation _currentGeneration = MonsterHandler.e_generation.first;
+    public MonsterHandler.e_generation GetCurrentGeneration => _currentGeneration;
 
     [SerializeField] private bool _isGrowthReady = false;
 
@@ -66,7 +66,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
             if (addResult < _expNeedToGrow) {
                 _currentExp = addResult;
             }
-            if (_currentGeneration < BasePlayableMonster.e_generation.third) {
+            if (_currentGeneration < MonsterHandler.e_generation.third) {
                 _isGrowthReady = true;
                 OnGrowthReady();
             } else {
@@ -147,9 +147,9 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _specialAttackAction.action.started += SpecialAttack;
         _specialAttackAction.action.Enable();
 
-        for (int i = 0; i < (int)BasePlayableMonster.e_generation.max; i++) {
+        for (int i = 0; i < (int)MonsterHandler.e_generation.max; i++) {
             _monsterHandler[i] = Instantiate(_monsterPrefab[i], this.transform);
-            _monsterHandler[i].Initialization(this);
+            //_monsterHandler[i].Initialization(this);
             _animator[i] = _monsterHandler[i].GetAnimator;
 
             //NOTE: 後方互換性のためにfalseになっているため、trueにするべきとのこと
@@ -187,7 +187,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _specialAttackAction.action.started -= SpecialAttack;
         _specialAttackAction.action.Dispose();
 
-        for (int i = 0; i < (int)BasePlayableMonster.e_generation.max; i++) {
+        for (int i = 0; i < (int)MonsterHandler.e_generation.max; i++) {
             OnAttackBehaviour[] attackState = _animator[i].GetBehaviours<OnAttackBehaviour>();
             foreach (OnAttackBehaviour behaviour in attackState) {
                 behaviour.OnStartAttackPublisher -= AttackCast;
@@ -258,33 +258,18 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         if (_onStop) {
             return;
         }
-        float targetSpeed = 0.0f;
         //FIXME: 複雑すぎる
         if (!_isOnAttack) {
             if (_hasMoveInput) {
-                if (_hasSprintInput) {
-                    UseStamina(STAMINA_BASE_CONSUMPTION_ON_SPRINT);
-                }
-                //targetSpeed = _hasSprintInput ? _currentSprintSpeed : _currentMoveSpeed;
                 UpdateForward();
             }
         }
         Vector2 input = _moveAction.action.ReadValue<Vector2>();
         float magnitude = input.magnitude;
-        //_currentHorizontalVelocity = Mathf.Lerp(_currentHorizontalVelocity, targetSpeed, SPEED_CHANGE_RATE);
         _currentHorizontalVelocity = magnitude * SPRINT_SPEED;
         Vector3 force = new Vector3(_forward.x * _currentHorizontalVelocity, -_verticalVelocity, _forward.z * _currentHorizontalVelocity);
         _animator[(int)_currentGeneration].SetFloat("Speed", magnitude);
         _controller.Move(force * Time.deltaTime);
-
-        if (_hasMoveInput) {
-            return;
-        }
-        if (MathUtility.IsInsideExclusive(_currentHorizontalVelocity, -STOP_THRESHOLD, STOP_THRESHOLD)) {
-            _animator[(int)_currentGeneration].SetFloat("Speed", 0.0f);
-            _currentHorizontalVelocity = 0.0f;
-            _onStop = true;
-        }
     }
 
     public void UpdateVerticalSpeed() {
@@ -426,17 +411,17 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(false);
-            _currentGeneration = BasePlayableMonster.e_generation.first;
+            _currentGeneration = MonsterHandler.e_generation.first;
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(true);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2)) {
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(false);
-            _currentGeneration = BasePlayableMonster.e_generation.second;
+            _currentGeneration = MonsterHandler.e_generation.second;
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(true);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3)) {
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(false);
-            _currentGeneration = BasePlayableMonster.e_generation.third;
+            _currentGeneration = MonsterHandler.e_generation.third;
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(true);
         }
     }

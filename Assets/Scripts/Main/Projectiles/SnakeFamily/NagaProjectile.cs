@@ -1,3 +1,4 @@
+using System.Collections;
 using SimpleMan.VisualRaycast;
 using UnityEngine;
 
@@ -14,5 +15,12 @@ internal sealed class NagaProjectile : PlayerTimeBombProjectile {
         }
         _explosion.gameObject.SetActive(true);
         _explosion.Play();
+        StartCoroutine(HyperviseParticleSystem());
+    }
+    private IEnumerator HyperviseParticleSystem() {
+        while (!_explosion.isStopped) {
+            yield return null;
+        }
+        this.gameObject.SetActive(false);
     }
 }

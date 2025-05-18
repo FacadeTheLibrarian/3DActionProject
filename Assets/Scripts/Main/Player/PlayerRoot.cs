@@ -1,22 +1,17 @@
 using UnityEngine;
 
 internal sealed class PlayerRoot : MonoBehaviour {
-    private const float UNITY_DEGREE_ADJUSTMENT = 90.0f;
-
     [SerializeField] private Camera _mainCamera = default;
     [SerializeField] private MonsterSetData _monsterData = default;
     [SerializeField] private MonsterHandler _monsterHandler = default;
     [SerializeField] private AnimationStateController _animationController = default;
 
-
     [SerializeField] private PlayerGodClass _player = default;
 
     [SerializeField] private PlayerInputs _input = default;
-    private PlayerDirection _direction;
+    private PlayerDirection _direction = default;
 
     [SerializeField] private Vector3 _forward = default;
-
-
 
 #if UNITY_EDITOR
     private void Reset() {
@@ -38,14 +33,14 @@ internal sealed class PlayerRoot : MonoBehaviour {
     }
 
     private void PlayerAwake() {
-        for (int i = 0; i < (int)BasePlayableMonster.e_generation.max; i++) {
+        for (int i = 0; i < (int)MonsterHandler.e_generation.max; i++) {
 
         }
         //for (int i = 0; i < (int)BasePlayableMonster.e_generation.max; i++) {
         //    BasePlayableMonster monster = Instantiate(_monsterData[i], this.transform);
         //    _monsterHandler.AddMonster(monster);
         //    _monsterHandler[i].Initialization(this);
-            
+
         //    _animator[i] = _monsterHandler[i].GetAnimator;
 
         //    //NOTE: 後方互換性のためにfalseになっているため、trueにするべきとのこと

@@ -6,8 +6,8 @@ internal class PlayerCruisingProjectile : BaseProjectile {
 
     [SerializeField] private ParticleSystem _baseProjectileParticleHandler = default;
 
-    [SerializeField] protected Vector3 _forward = default;
-    [SerializeField] private Vector3 _velocity = default;
+    protected Vector3 _forward = default;
+    private Vector3 _velocity = default;
 
     [SerializeField] private int _baseProjectileDamageAmount = 0;
     [SerializeField] protected int _subProjectileDamageAmount = 0;
@@ -18,7 +18,7 @@ internal class PlayerCruisingProjectile : BaseProjectile {
     [SerializeField] private bool _isLifeTimeOver = false;
     [SerializeField] private float _seekRadius = 1.0f;
 
-    [SerializeField] protected LayerMask _layer = default;
+    protected LayerMask _layer = default;
 
     public void Fire(in Vector3 currentPosition, in Vector3 forward, float velocity, int mainDamage, int subDamage, in LayerMask layer) {
         _isLifeTimeOver = false;

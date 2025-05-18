@@ -21,14 +21,15 @@ internal sealed class NagaTripletFireBall : BaseAttack {
     }
 
     public void Fire() {
-        Transform playerPosition = _player.GetTransform();
-        Vector3 forward = _player.GetForward();
-        int modifiedBaseDamage = (int)(_baseDamage * _player.GetAttackFactor());
-        int modifiedExplosionDamage = (int)(_explosiveDamage * _player.GetAttackFactor());
+        Transform playerPosition = _playerTransform ;
+        Vector3 forward = _direction.GetCachedForward();
+        int modifiedBaseDamage = (int)(_baseDamage * _attackFactor.GetAttackFactor);
+        int modifiedExplosionDamage = (int)(_explosiveDamage * _attackFactor.GetAttackFactor);
 
         PullTrigger(GetInitialCastPosition(), forward, _initialVelocity, modifiedBaseDamage, modifiedExplosionDamage);
     }
 
+    //FIXME: リファクタリング必須
     private void PullTrigger(in Vector3 currentPosition, in Vector3 forward, float initialVelocity, int mainDamage, int subDamage) {
         Vector3 modifiedOffset = Quaternion.LookRotation(forward, Vector3.up) * _offset;
         Vector3 rightDiagonal = Quaternion.AngleAxis(_shotAngle, Vector3.up) * forward;
