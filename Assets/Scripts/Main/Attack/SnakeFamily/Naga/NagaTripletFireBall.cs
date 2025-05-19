@@ -30,7 +30,7 @@ internal sealed class NagaTripletFireBall : BaseAttack {
         PullTrigger(GetInitialCastPosition(), forward, _initialVelocity, modifiedBaseDamage, modifiedExplosionDamage);
     }
 
-    //FIXME: リファクタリング必須
+    //FIXME: リファクタリングする 壊れていないのでまた今度
     private void PullTrigger(in Vector3 currentPosition, in Vector3 forward, float initialVelocity, int mainDamage, int subDamage) {
         Vector3 modifiedOffset = Quaternion.LookRotation(forward, Vector3.up) * _offset;
         Vector3 rightDiagonal = Quaternion.AngleAxis(_shotAngle, Vector3.up) * forward;
@@ -43,6 +43,6 @@ internal sealed class NagaTripletFireBall : BaseAttack {
         centerInstance.Fire(currentPosition + modifiedOffset, forward, currentPosition + (forward * _distance), forward * initialVelocity, mainDamage, subDamage, _layer, _projectileLifetime);
 
         PlayerTimeBombProjectile rightInstance = _pool.GetPooledObject();
-        rightInstance.Fire(currentPosition + (modifiedOffset * 2.0f), forward, currentPosition + (rightDiagonal * _distance), rightDiagonal * initialVelocity, mainDamage, subDamage, _layer, _projectileLifetime);
+        rightInstance.Fire(currentPosition + (modifiedOffset + modifiedOffset), forward, currentPosition + (rightDiagonal * _distance), rightDiagonal * initialVelocity, mainDamage, subDamage, _layer, _projectileLifetime);
     }
 }

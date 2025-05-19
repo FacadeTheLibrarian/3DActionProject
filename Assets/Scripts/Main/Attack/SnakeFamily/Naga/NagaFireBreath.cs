@@ -10,24 +10,21 @@ internal sealed class NagaFireBreath : BaseAttack {
 
     private Vector3 _current = default;
     private Vector3 _addend = default;
-    private int _executedCasts = 0;
-    private float _timeAccumeration = 0.0f;
-    private float _castInterval = 0.0f;
 
     //FIXME: リファクタリング必須
     public void FireBreath() {
         _stamina.UseStamina(_baseStaminaConsumption);
         float clipLength = _animator.GetCurrentAnimatorStateInfo(0).length;
-        _castInterval = clipLength / _castIteration;
+        float castInterval = clipLength / _castIteration;
         _current = GetInitialCastPosition();
-        _executedCasts = 0;
+        int executedCasts = 0;
 
         Vector3 forward = _direction.GetCachedForward();
         _addend = Quaternion.LookRotation(forward, Vector3.up) * _offsetParCast;
 
         Transform playerTransform = _playerTransform ;
         Collider[] results = ComponentExtension.BoxOverlap(playerTransform, _current, _boxSize, playerTransform.rotation, _layer, true);
-        _executedCasts++;
+        executedCasts++;
         _current += _addend;
 
         foreach (Collider collider in results) {
@@ -35,20 +32,22 @@ internal sealed class NagaFireBreath : BaseAttack {
                 possibleEnemy.GetHit((int)(_baseDamage * _attackFactor.GetAttackFactor), _direction.GetCachedForward());
             }
         }
-        StartCoroutine(OnAttack());
+        StartCoroutine(OnAttack(executedCasts, castInterval));
     }
-    private IEnumerator OnAttack() {
+    private IEnumerator OnAttack(int alreadyExecutedCasts, float castInterval) {
+        int executedCasts = alreadyExecutedCasts;
+        float timeAccumeration = 0.0f;
         while (true) {
-            if (_executedCasts >= _castIteration) {
+            if (executedCasts >= _castIteration) {
                 yield break;
             }
-            _timeAccumeration += Time.deltaTime;
-            if (_timeAccumeration > _castInterval) {
-                _timeAccumeration = 0.0f;
+            timeAccumeration += Time.deltaTime;
+            if (timeAccumeration > castInterval) {
+                timeAccumeration = 0.0f;
 
                 Transform playerTransform = _playerTransform;
                 Collider[] results = ComponentExtension.BoxOverlap(playerTransform, _current, _boxSize, playerTransform.rotation, _layer, true);
-                _executedCasts++;
+                executedCasts++;
 
                 foreach (Collider collider in results) {
                     if (collider.TryGetComponent<IDamagableObjects>(out IDamagableObjects possibleEnemy)) {
