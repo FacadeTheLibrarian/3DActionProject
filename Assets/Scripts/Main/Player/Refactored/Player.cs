@@ -11,7 +11,7 @@ internal sealed class Player : MonoBehaviour {
     [SerializeField] private PlayerInputs _inputs = default;
     [SerializeField] private PlayerStamina _stamina = default;
 
-    [SerializeField] private PlayerMove _move = default;
+    [SerializeField] private PlayerMoveStateMachine _moveStateMachine = default;
     [SerializeField] private PlayerAttack _attack = default;
 
 #if UNITY_EDITOR
@@ -19,7 +19,7 @@ internal sealed class Player : MonoBehaviour {
         _direction = GetComponent<PlayerDirection>();
         _animationStateController = GetComponent<AnimationStateController>();
         _inputs = GetComponent<PlayerInputs>();
-        _move = GetComponent<PlayerMove>();
+        _moveStateMachine = GetComponent<PlayerMoveStateMachine>();
         _attack = GetComponent<PlayerAttack>();
         _stamina = GetComponent<PlayerStamina>();
     }
@@ -32,12 +32,12 @@ internal sealed class Player : MonoBehaviour {
         _direction.Initialization(_mainCamera);
         _stamina.Initialization(_animationStateController);
 
-        _move.Initialization(_inputs, _animationStateController, _direction);
+        _moveStateMachine.Initialization(_inputs, _animationStateController, _direction, _stamina);
         _attack.Initialization(_inputs, _animationStateController, _direction, _monsterHandler, _stamina);
     }
 
     private void Update() {
-        _move.UpdateMove();
+        _moveStateMachine.UpdateBehaviour();
         _stamina.UpdateStamina();
     }
 

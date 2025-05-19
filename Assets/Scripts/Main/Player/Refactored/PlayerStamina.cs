@@ -24,7 +24,6 @@ internal sealed class PlayerStamina : MonoBehaviour {
 
 #if UNITY_EDITOR
     private void Update() {
-        Debug.Log(STAMINA.Value);
         if (Input.GetKeyDown(KeyCode.O)) {
             STAMINA.Value -= 10.0f;
         }
