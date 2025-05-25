@@ -32,11 +32,11 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     private const float STAMINA_BASE_CONSUMPTION_ON_ATTACK = 30.0f;
 
     //NOTE: 依存コンポーネント
-    [SerializeField] private MonsterSetData _monsterPrefab = default;
+    [SerializeField] private MonsterData _monsterPrefab = default;
     [SerializeField] private Camera _mainCamera = default;
 
-    [SerializeField] private BasePlayableMonster[] _monsterHandler = new BasePlayableMonster[(int)MonsterHandler.e_generation.max];
-    [SerializeField] private Animator[] _animator = new Animator[(int)MonsterHandler.e_generation.max];
+    [SerializeField] private BasePlayableMonster[] _monsterHandler = new BasePlayableMonster[(int)PlayerGeneration.e_generation.max];
+    [SerializeField] private Animator[] _animator = new Animator[(int)PlayerGeneration.e_generation.max];
 
     [SerializeField] private InputActionReference _moveAction = default;
     [SerializeField] private InputActionReference _sprintAction = default;
@@ -49,8 +49,8 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     //NOTE: 成長システム関連
     [SerializeField] private PlayerGrowthParticlesController _playerCommonParticles = default;
     [SerializeField] private InputActionReference _growthAction = default;
-    [SerializeField] private MonsterHandler.e_generation _currentGeneration = MonsterHandler.e_generation.first;
-    public MonsterHandler.e_generation GetCurrentGeneration => _currentGeneration;
+    [SerializeField] private PlayerGeneration.e_generation _currentGeneration = PlayerGeneration.e_generation.first;
+    public PlayerGeneration.e_generation GetCurrentGeneration => _currentGeneration;
 
     [SerializeField] private bool _isGrowthReady = false;
 
@@ -66,7 +66,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
             if (addResult < _expNeedToGrow) {
                 _currentExp = addResult;
             }
-            if (_currentGeneration < MonsterHandler.e_generation.third) {
+            if (_currentGeneration < PlayerGeneration.e_generation.third) {
                 _isGrowthReady = true;
                 OnGrowthReady();
             } else {
@@ -147,7 +147,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _specialAttackAction.action.started += SpecialAttack;
         _specialAttackAction.action.Enable();
 
-        for (int i = 0; i < (int)MonsterHandler.e_generation.max; i++) {
+        for (int i = 0; i < (int)PlayerGeneration.e_generation.max; i++) {
             _monsterHandler[i] = Instantiate(_monsterPrefab[i], this.transform);
             //_monsterHandler[i].Initialization(this);
             _animator[i] = _monsterHandler[i].GetAnimator;
@@ -187,7 +187,7 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
         _specialAttackAction.action.started -= SpecialAttack;
         _specialAttackAction.action.Dispose();
 
-        for (int i = 0; i < (int)MonsterHandler.e_generation.max; i++) {
+        for (int i = 0; i < (int)PlayerGeneration.e_generation.max; i++) {
             OnAttackBehaviour[] attackState = _animator[i].GetBehaviours<OnAttackBehaviour>();
             foreach (OnAttackBehaviour behaviour in attackState) {
                 behaviour.OnStartAttackPublisher -= AttackCast;
@@ -226,8 +226,8 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     }
 
     //経験値デリゲート
-    public void GainExperience(int amount) {
-        CurrentExp += amount;
+    public void GainExperience(float amount) {
+        CurrentExp += (int)amount;
     }
 
     private void OnGrowthReady() {
@@ -411,17 +411,17 @@ internal sealed class PlayerGodClass : MonoBehaviour, IPlayer {
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(false);
-            _currentGeneration = MonsterHandler.e_generation.first;
+            _currentGeneration = PlayerGeneration.e_generation.first;
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(true);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2)) {
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(false);
-            _currentGeneration = MonsterHandler.e_generation.second;
+            _currentGeneration = PlayerGeneration.e_generation.second;
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(true);
         }
         if (Input.GetKeyDown(KeyCode.Alpha3)) {
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(false);
-            _currentGeneration = MonsterHandler.e_generation.third;
+            _currentGeneration = PlayerGeneration.e_generation.third;
             _monsterHandler[(int)_currentGeneration].gameObject.SetActive(true);
         }
     }

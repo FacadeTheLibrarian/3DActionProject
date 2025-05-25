@@ -11,6 +11,7 @@ internal sealed class PlayerInputs : MonoBehaviour {
         normalAttack = 2,
         specialAttack = 3,
         dodge = 4,
+        Growth = 5,
         max,
     };
     private readonly string[] INPUT_ACTIONS_NAMES = new string[] {
@@ -19,6 +20,7 @@ internal sealed class PlayerInputs : MonoBehaviour {
         "NormalAttack",
         "SpecialAttack",
         "Dodge",
+        "Growth",
     };
 
     [SerializeField] private InputActionAsset _actionAsset = default;
