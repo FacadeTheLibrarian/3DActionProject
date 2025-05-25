@@ -4,14 +4,14 @@ using UnityEngine;
 using UniRx;
 
 internal sealed class StaminaPresenter : MonoBehaviour {
-    [SerializeField] private PlayerStamina _playerStamina = default;
-    [SerializeField] private StaminaView _staminaModel = default;
+    [SerializeField] private PlayerStamina _model = default;
+    [SerializeField] private StaminaView _view = default;
 
     private void Awake() {
-        _playerStamina.Stamina.Subscribe(
-            (x) => {
-                _staminaModel.OnStaminaChanged(x / _playerStamina.GetStaminaMax);
-            }
-        ).AddTo(this);
+        _model.OnStaminaChanged += _view.OnStaminaChanged;
+    }
+
+    private void OnDestroy() {
+        _model.OnStaminaChanged -= _view.OnStaminaChanged;
     }
 }

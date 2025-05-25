@@ -2,7 +2,7 @@ using UnityEngine;
 
 internal sealed class PlayerRoot : MonoBehaviour {
     [SerializeField] private Camera _mainCamera = default;
-    [SerializeField] private MonsterSetData _monsterData = default;
+    [SerializeField] private MonsterData _monsterData = default;
     [SerializeField] private MonsterHandler _monsterHandler = default;
     [SerializeField] private AnimationStateController _animationController = default;
 
@@ -33,7 +33,7 @@ internal sealed class PlayerRoot : MonoBehaviour {
     }
 
     private void PlayerAwake() {
-        for (int i = 0; i < (int)MonsterHandler.e_generation.max; i++) {
+        for (int i = 0; i < (int)PlayerGeneration.e_generation.max; i++) {
 
         }
         //for (int i = 0; i < (int)BasePlayableMonster.e_generation.max; i++) {

@@ -3,16 +3,23 @@ using UnityEngine;
 internal sealed class Player : MonoBehaviour {
     [SerializeField] private Camera _mainCamera = default;
 
-    [SerializeField] private MonsterSetData _monsterSetData = default;
+    [SerializeField] private MonsterData _monsterData = default;
     [SerializeField] private MonsterHandler _monsterHandler = default;
 
     [SerializeField] private AnimationStateController _animationStateController = default;
     [SerializeField] private PlayerDirection _direction = default;
     [SerializeField] private PlayerInputs _inputs = default;
-    [SerializeField] private PlayerStamina _stamina = default;
 
+    [SerializeField] private PlayerStamina _stamina = default;
+    [SerializeField] private PlayerHitPoint _hitPoint = default;
+    [SerializeField] private PlayerExpPoint _expPoint = default;
+   
     [SerializeField] private PlayerMoveStateMachine _moveStateMachine = default;
     [SerializeField] private PlayerAttack _attack = default;
+#if UNITY_EDITOR
+    [SerializeField] private PlayerGeneration.e_generation _initialGenerationForDebug = PlayerGeneration.e_generation.first;
+#endif
+    private PlayerGeneration _generation = default;
 
 #if UNITY_EDITOR
     private void Reset() {
@@ -25,24 +32,25 @@ internal sealed class Player : MonoBehaviour {
     }
 #endif
 
-    private void Start() {
-        _monsterHandler = new MonsterHandler(_monsterSetData, transform);
-        _animationStateController.Initialization(_monsterHandler);
+    private void Awake() {
+        _generation = new PlayerGeneration();
+#if UNITY_EDITOR
+        _generation.DebugSetGeneration = _initialGenerationForDebug;
+#endif
+        _monsterHandler = new MonsterHandler(_monsterData, transform, _generation);
+        _expPoint.Initialization(_monsterData, _generation);
+
+        _animationStateController.Initialization(_monsterHandler, _generation);
         _inputs.Initialization();
         _direction.Initialization(_mainCamera);
-        _stamina.Initialization(_animationStateController);
+        _stamina.Initialization(_animationStateController, _monsterData);
 
-        _moveStateMachine.Initialization(_inputs, _animationStateController, _direction, _stamina);
+        _moveStateMachine.Initialization(_inputs, _animationStateController, _direction, _monsterData, _stamina);
         _attack.Initialization(_inputs, _animationStateController, _direction, _monsterHandler, _stamina);
     }
 
     private void Update() {
         _moveStateMachine.UpdateBehaviour();
         _stamina.UpdateStamina();
-    }
-
-    private void OnDestroy() {
-        _monsterHandler.Dispose();
-        _animationStateController.Dispose();
     }
 }
