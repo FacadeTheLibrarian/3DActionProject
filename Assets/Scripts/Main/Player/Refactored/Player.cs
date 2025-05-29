@@ -16,6 +16,8 @@ internal sealed class Player : MonoBehaviour {
    
     [SerializeField] private PlayerMoveStateMachine _moveStateMachine = default;
     [SerializeField] private PlayerAttack _attack = default;
+
+    [SerializeField] private PlayerGrowth _growth = default;
 #if UNITY_EDITOR
     [SerializeField] private PlayerGeneration.e_generation _initialGenerationForDebug = PlayerGeneration.e_generation.first;
 #endif
@@ -29,6 +31,7 @@ internal sealed class Player : MonoBehaviour {
         _moveStateMachine = GetComponent<PlayerMoveStateMachine>();
         _attack = GetComponent<PlayerAttack>();
         _stamina = GetComponent<PlayerStamina>();
+        _growth = GetComponent<PlayerGrowth>();
     }
 #endif
 
@@ -47,6 +50,8 @@ internal sealed class Player : MonoBehaviour {
 
         _moveStateMachine.Initialization(_inputs, _animationStateController, _direction, _monsterData, _stamina);
         _attack.Initialization(_inputs, _animationStateController, _direction, _monsterHandler, _stamina);
+
+        _growth.Initialization(_inputs, _animationStateController, _monsterHandler, _expPoint);
     }
 
     private void Update() {

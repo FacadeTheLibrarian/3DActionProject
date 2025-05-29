@@ -4,7 +4,7 @@ using UnityEngine;
 
 internal sealed class AnimationStateController: MonoBehaviour {
     private readonly int NAME_LOCOMOTION = Animator.StringToHash("Locomotion");
-    private readonly int NAME_DODGE = Animator.StringToHash("Dodge");
+    private readonly int NAME_GROWTH = Animator.StringToHash("Growth");
 
     private readonly int PARAMS_SPEED = Animator.StringToHash("Speed");
     private readonly int PARAMS_ATTACK = Animator.StringToHash("Attack");
@@ -12,6 +12,8 @@ internal sealed class AnimationStateController: MonoBehaviour {
     private readonly int PARAMS_START_DODGE = Animator.StringToHash("Dodge");
     private readonly int PARAMS_END_DODGE = Animator.StringToHash("EndDodge");
     private readonly int PARAMS_MOVEMENT_LOCK = Animator.StringToHash("MovementLock");
+
+    public event Action OnEventSceneStart = default;
 
     private MonsterHandler _monsterHandler = default;
     private PlayerGeneration _playerGeneration = default;
@@ -56,5 +58,9 @@ internal sealed class AnimationStateController: MonoBehaviour {
     public void EndDodge() {
         Animator animator = _monsterHandler[(int)_playerGeneration.GetCurrentGeneration].GetAnimator;
         animator.SetTrigger(PARAMS_END_DODGE);
+    }
+    public void StartGrowthEvent() {
+        Animator animator = _monsterHandler[(int)_playerGeneration.GetCurrentGeneration].GetAnimator;
+        animator.Play(NAME_GROWTH);
     }
 }
