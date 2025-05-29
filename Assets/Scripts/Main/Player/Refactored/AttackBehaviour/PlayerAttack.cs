@@ -8,12 +8,12 @@ internal sealed class PlayerAttack : MonoBehaviour {
         special = 1,
     }
 
-    [SerializeField] private AnimationStateController _animationStateController = default;
+    [ReadOnly, SerializeField] private AnimationStateController _animationStateController = default;
     private InputAction _normalAttack = default;
     private InputAction _specialAttack = default;
     //REVIEW: Directionは本当にキャッシュするべきか？使わなければ消す
-    [SerializeField] private PlayerDirection _direction = default;
-    [SerializeField] private PlayerStamina _stamina = default;
+    [ReadOnly, SerializeField] private PlayerDirection _direction = default;
+    [ReadOnly, SerializeField] private PlayerStamina _stamina = default;
 
     private PlayerAttackFactor _attackFactor = default;
 

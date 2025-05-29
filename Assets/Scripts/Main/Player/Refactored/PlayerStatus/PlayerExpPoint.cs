@@ -11,9 +11,9 @@ internal sealed class PlayerExpPoint : MonoBehaviour {
     public event Action<float> OnGainExp = default;
     public event Action OnGrowthReady = default;
 
-    [SerializeField] private float _expTotal = 0.0f;
-    [SerializeField] private float _currentExp = 0.0f;
-    private bool _isGrowthReady = false;
+    [ReadOnly, SerializeField] private float _expTotal = 0.0f;
+    [ReadOnly, SerializeField] private float _currentExp = 0.0f;
+    [ReadOnly, SerializeField] private bool _isGrowthReady = false;
     public bool IsGrowthReady => _isGrowthReady;
 
     public void Initialization(in MonsterData monsterData, in PlayerGeneration playerGeneration) {
@@ -28,6 +28,7 @@ internal sealed class PlayerExpPoint : MonoBehaviour {
         float nextExpPoint = _currentExp + amount;
         float expNeeds = _expPointsNeedFor[(int)_playerGeneration.GetCurrentGeneration];
         if (nextExpPoint >= expNeeds) {
+            _isGrowthReady = true;
             OnGrowthReady?.Invoke();
         }
         _currentExp = nextExpPoint;
