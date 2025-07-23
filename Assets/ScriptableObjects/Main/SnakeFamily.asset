@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb2c95f2a1581eb48a22a6d00b9f7400, type: 3}
+  m_Name: SnakeFamily
+  m_EditorClassIdentifier: 
+  _monsterData:
+  - {fileID: 8814558526632010015, guid: ea713d21022b3424b98a392ebd5002d0, type: 3}
+  - {fileID: 3688045191130036912, guid: bfea328068a3f0d4a8d9522ca0a1cb1a, type: 3}
+  - {fileID: 2029065605579907237, guid: 30577cf0e5053e348aa641f4d800617e, type: 3}
+  _expPointNeedForFirstToSecondGrowth: 30
+  _expPointNeedForSecondToThirdGrowth: 100
+  _expPointNeedForGrowthAttack: 150
+  _initialStamina: 120
+  _staminaRecoveryAmountPerSecond: 100
+  _baseStaminaConsumptionOnDodge: 25

@@ -1,7 +1,7 @@
 internal interface ISceneController {
-    public e_sceneIndex GetToken();
-    public void OnSceneStart();
-    public e_sceneIndex SceneUpdate();
-    public void SceneFixedUpdate();
-    public void OnSceneExit();
+    e_sceneIndex GetToken();
+    void OnSceneStart();
+    e_sceneIndex SceneUpdate();
+    void SceneFixedUpdate();
+    void OnSceneExit();
 }
