@@ -8,6 +8,8 @@ internal sealed class PlayerHitPoint : MonoBehaviour {
     private float _hitPointMax = HP_BASE_MAX;
     private float _hitPoint = HP_BASE_MAX;
 
+    public float GetHitPoint => _hitPoint;
+
 #if UNITY_EDITOR
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Alpha1)) {

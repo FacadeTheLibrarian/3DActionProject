@@ -10,9 +10,18 @@ internal sealed class PlayerGeneration {
     }
     private e_generation _currentGeneration = e_generation.first;
     public e_generation GetCurrentGeneration => _currentGeneration;
+
+    public void GrowthToNextGeneration() {
+        if (_currentGeneration < e_generation.max - 1) {
+            _currentGeneration++;
+        }
+    }
 #if UNITY_EDITOR
     public e_generation DebugSetGeneration {
         set { _currentGeneration = value; }
+    }
+    public void DebugGrowth() {
+        _currentGeneration =(e_generation)((int)(_currentGeneration + 1) % (int)e_generation.max);
     }
 #endif
 }

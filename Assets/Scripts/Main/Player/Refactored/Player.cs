@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
 
-internal sealed class Player : MonoBehaviour {
+internal sealed class Player : MonoBehaviour, IPlayerState, IDisposable {
     [SerializeField] private Camera _mainCamera = default;
 
-    [SerializeField] private MonsterData _monsterData = default;
+    private MonsterData _monsterData = default;
     [SerializeField] private MonsterHandler _monsterHandler = default;
 
     [SerializeField] private AnimationStateController _animationStateController = default;
@@ -35,12 +36,13 @@ internal sealed class Player : MonoBehaviour {
     }
 #endif
 
-    private void Awake() {
+    public void PlayerStart(in MonsterData monsterData) {
         _generation = new PlayerGeneration();
 #if UNITY_EDITOR
         _generation.DebugSetGeneration = _initialGenerationForDebug;
 #endif
-        _monsterHandler = new MonsterHandler(_monsterData, transform, _generation);
+        _monsterData = monsterData;
+        _monsterHandler = new MonsterHandler(_monsterData, this.transform, _generation);
         _expPoint.Initialization(_monsterData, _generation);
 
         _animationStateController.Initialization(_monsterHandler, _generation);
@@ -51,11 +53,36 @@ internal sealed class Player : MonoBehaviour {
         _moveStateMachine.Initialization(_inputs, _animationStateController, _direction, _monsterData, _stamina);
         _attack.Initialization(_inputs, _animationStateController, _direction, _monsterHandler, _stamina);
 
-        _growth.Initialization(_inputs, _animationStateController, _monsterHandler, _expPoint);
+        _growth.Initialization(_inputs, _animationStateController, _monsterHandler, _expPoint, _generation);
     }
 
-    private void Update() {
+    public void Dispose() {
+        //_inputs.Dispose();
+        //_monsterHandler.Dispose();
+        //_animationStateController.Dispose();
+        //_direction.Dispose();
+        //_stamina.Dispose();
+        //_hitPoint.Dispose();
+        //_expPoint.Dispose();
+        //_moveStateMachine.Dispose();
+        //_attack.Dispose();
+        //_growth.Dispose();
+    }
+
+    public void PlayerUpdate() {
         _moveStateMachine.UpdateBehaviour();
         _stamina.UpdateStamina();
+    }
+    public Transform GetTransform() {
+        return this.transform;
+    }
+    public float GetPlayerAttackFactor() {
+        return _attack.GetAttackFactor;
+    }
+    public float GetPlayerHitPoint() {
+        return _hitPoint.GetHitPoint;
+    }
+    public float GetPlayerStamina() {
+        return _stamina.GetStamina;
     }
 }
