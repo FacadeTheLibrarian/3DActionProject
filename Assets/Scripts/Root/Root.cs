@@ -1,8 +1,8 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections.Generic;
 
 internal enum e_sceneIndex {
     end = -2,
@@ -78,7 +78,7 @@ internal sealed class Root : MonoBehaviour {
             return;
         }
         _controller.SceneFixedUpdate();
-        
+
     }
 
     private void LateUpdate() {
@@ -120,8 +120,7 @@ internal sealed class Root : MonoBehaviour {
 #if UNITY_EDITOR
         if ((int)_sceneToLoadFirstlyForDbg < 0 || _sceneToLoadFirstlyForDbg == e_sceneIndex.max) {
             await SceneManager.LoadSceneAsync(SCENE_NAMES[e_sceneIndex.title], LoadSceneMode.Additive);
-        }
-        else {
+        } else {
             await SceneManager.LoadSceneAsync(SCENE_NAMES[_sceneToLoadFirstlyForDbg], LoadSceneMode.Additive);
         }
 #else
@@ -161,8 +160,7 @@ internal sealed class Root : MonoBehaviour {
             _controller.OnSceneStart();
             _ = Backboard.GetInstance.ControllBackboardAsync(e_backboardIs.off, FPS, TIME_TO_DRAW_BACKBOARD[to]);
             _onTransition = false;
-        }
-        catch (TaskCanceledException) {
+        } catch (TaskCanceledException) {
             Debug.LogWarning($"Scene transition canceled. This is a handled cancel.");
         }
     }
@@ -179,8 +177,7 @@ internal sealed class Root : MonoBehaviour {
             await Backboard.GetInstance.ControllBackboardAsync(e_backboardIs.on, FPS, TIME_TO_DRAW_BACKBOARD[e_sceneIndex.end]);
             token.ThrowIfCancellationRequested();
             await SceneManager.UnloadSceneAsync(_sceneToken);
-        }
-        catch (TaskCanceledException) {
+        } catch (TaskCanceledException) {
             Debug.LogWarning("Cancel fired while exitting game. This is a handled cancel");
         }
 

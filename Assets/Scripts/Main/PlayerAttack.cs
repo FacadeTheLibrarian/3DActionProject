@@ -1,7 +1,0 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.InputSystem;
-
-internal sealed class PlayerAttack : MonoBehaviour {
-    
-}
