@@ -72,7 +72,6 @@ internal sealed class PlayerMoveStateMachine : MonoBehaviour {
     }
     public void OnEndDodge() {
         _currentBehaviour = _playerHorizontalMove;
-        _animationStateController.EndDodge();
         _currentBehaviour.UpdateMoveBehaviour(_move.ReadValue<Vector2>());
     }
     public void OnStartMove(InputAction.CallbackContext context) {

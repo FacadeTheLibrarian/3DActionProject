@@ -11,6 +11,16 @@ internal sealed class MonsterHandler {
         get { return MONSTERS[index]; }
     }
 
+    public void Increment(int index) {
+        if (index < 0 || index >= MONSTERS.Count) {
+            throw new ArgumentOutOfRangeException(nameof(index), "Index is out of range.");
+        }
+#if UNITY_EDITOR
+#endif
+        MONSTERS[index].gameObject.SetActive(false);
+        MONSTERS[index + 1].gameObject.SetActive(true);
+    }
+
     public MonsterHandler(in MonsterData monsterData, in Transform parent, in PlayerGeneration generation) {
         for(int i = 0; i < (int)PlayerGeneration.e_generation.max; i++) {
             BasePlayableMonster monster = monsterData.SummonMonster(i, parent);

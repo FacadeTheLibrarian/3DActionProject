@@ -7,7 +7,7 @@ internal sealed class PlayerExpPoint : MonoBehaviour {
     private PlayerGeneration _playerGeneration = default;
 
     private float[] _expPointsNeedFor = new float[(int)PlayerGeneration.e_generation.max];
-    
+
     public event Action<float> OnGainExp = default;
     public event Action OnGrowthReady = default;
 
@@ -35,4 +35,18 @@ internal sealed class PlayerExpPoint : MonoBehaviour {
         OnGainExp?.Invoke(_currentExp / expNeeds);
         _expTotal += amount;
     }
+
+    public bool TryGrowth() {
+        if (!_isGrowthReady) {
+            return false;
+        }
+        _playerGeneration.GrowthToNextGeneration();
+        return true;
+    }
+
+#if UNITY_EDITOR
+    public void DebugGrowth() {
+        _playerGeneration.DebugGrowth();
+    }
+#endif
 }

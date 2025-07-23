@@ -20,5 +20,5 @@ MonoBehaviour:
   _expPointNeedForSecondToThirdGrowth: 100
   _expPointNeedForGrowthAttack: 150
   _initialStamina: 120
-  _staminaRecoveryAmountPerSecond: 20
+  _staminaRecoveryAmountPerSecond: 100
   _baseStaminaConsumptionOnDodge: 25

@@ -15,7 +15,7 @@ internal sealed class PlayerStamina : MonoBehaviour {
     [SerializeField] private float _staminaRecoveryAmount = 0.0f;
     [SerializeField] private float _staminaRecoveryFactor = 1.0f;
 
-    public float GetStaminaMax => _staminaMax;
+    public float GetStamina => _stamina;
     public bool IsRunOutOfStamina => _isRunOutOfStamina;
 
     public void Initialization(in AnimationStateController animationStateController, in MonsterData monsterData) {

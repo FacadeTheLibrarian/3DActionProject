@@ -30,7 +30,7 @@ internal sealed class PlayerDodge : MonoBehaviour, IMoveBehaviour {
 
     public void OnStartDodge(Vector2 inputDirection) {
         float magnitude = Mathf.Clamp01(inputDirection.magnitude);
-        _cachedForward = _playerDirection.GetUpdatedForward(inputDirection);
+        _cachedForward = _playerDirection.GetCachedForward();
         _playerStamina.UseStamina(_baseStaminaConsumption * _staminaConsumptionFactor);
     }
 

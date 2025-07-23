@@ -22,13 +22,13 @@ internal sealed class PlayerRoot : MonoBehaviour {
     public void PlayerStart() {
         //_monsterHandler.SummonMonsters(_monsterData, this.transform);
         //_animationController = new AnimationStateController(_monsterHandler);
-        _player.PlayerStart();
+        //_player.PlayerStart();
     }
     public bool PlayerUpdate() {
-        _player.HorizontalMove();
-        _player.Dodge();
-        _player.RecoverStamina();
-        _player.UpdateStaminaBar();
+        //_player.HorizontalMove();
+        //_player.Dodge();
+        //_player.RecoverStamina();
+        //_player.UpdateStaminaBar();
         return false;
     }
 

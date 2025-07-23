@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 
 internal class OnAttackBehaviour : StateMachineBehaviour {
@@ -6,9 +6,9 @@ internal class OnAttackBehaviour : StateMachineBehaviour {
     public event Action OnStartAttackPublisher;
     public event Action OnEndAttackPublisher;
 
-    protected IPlayer _player = default;
+    protected IPlayerState _player = default;
 
-    public void Initialization(in IPlayer player) {
+    public void Initialization(in IPlayerState player) {
         _player = player;
     }
 

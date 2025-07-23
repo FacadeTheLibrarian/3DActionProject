@@ -16,6 +16,7 @@ internal sealed class PlayerAttack : MonoBehaviour {
     [ReadOnly, SerializeField] private PlayerStamina _stamina = default;
 
     private PlayerAttackFactor _attackFactor = default;
+    public float GetAttackFactor => _attackFactor.GetAttackFactor;
 
     public void Initialization(in PlayerInputs inputs, in AnimationStateController animationController, in PlayerDirection direction, in MonsterHandler handler, in PlayerStamina stamina) {
         _attackFactor = new PlayerAttackFactor();

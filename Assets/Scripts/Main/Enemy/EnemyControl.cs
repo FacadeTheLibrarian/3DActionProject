@@ -1,26 +1,27 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 internal sealed class EnemyControl : MonoBehaviour {
-
-    [SerializeField] private PlayerGodClass _player = default;
+    [SerializeField] private IPlayerState _player = default;
 
     [SerializeField] private EnemyFactory _factory = default;
-    [SerializeField] private Vector3 _startPosition = default;
-    [SerializeField] private float _xOffset = default;
-    [SerializeField] private float _yOffset = default;
+    [SerializeField] private List<Vector3> _enemyAppearancePoints = new List<Vector3>();
 
-    [SerializeField] private int _width = 3;
-    [SerializeField] private int _height = 3;
+    private List<BaseEnemy> _enemyHandler = default;
 
-    private void Start() {
-        float y = _yOffset;
-        float x = _xOffset;
-        for (int i = 0; i < _height; i++) {
-            for (int j = 0; j < _width; j++) {
-                BaseEnemy enemy = _factory.GenerateFromPodOne();
-                enemy.transform.position = new Vector3(_startPosition.x + (_xOffset * j), _startPosition.y, _startPosition.z + (_yOffset * i));
-                enemy.transform.SetParent(this.transform, false);
-            }
+    public void EnemyControlStart(in IPlayerState player) {
+        _enemyHandler = new List<BaseEnemy>();
+        for (int i = 0; i < _enemyAppearancePoints.Count; i++) {
+            BaseEnemy enemy = _factory.GenerateFromPodOne(_enemyAppearancePoints[i]);
+            enemy.transform.SetParent(this.transform, true);
+            enemy.EnemyInitialization(player);
+            _enemyHandler.Add(enemy);
+        }
+    }
+
+    public void EnemyControlUpdate() {
+        foreach(BaseEnemy enemy in _enemyHandler) {
+            enemy.EnemyUpdate();
         }
     }
 }
